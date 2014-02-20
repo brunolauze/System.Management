@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9967229A-334D-4ADF-965E-49B449A002E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Management.Tests</RootNamespace>
+    <AssemblyName>System.Management.Tests</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\mono.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ManagementObjectFixture.cs" />
+    <Compile Include="WbemClientFixture.cs" />
+    <Compile Include="ClassManifest.cs" />
+    <Compile Include="InstanceHeader.cs" />
+    <Compile Include="ICodeWriter.cs">
+      <DependentUpon>InstanceHeader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CodeWriterBase.cs" />
+    <Compile Include="GeneratorFactory.cs" />
+    <Compile Include="InstanceBaseHeader.cs" />
+    <Compile Include="InstanceBaseImpl.cs" />
+    <Compile Include="InstanceImpl.cs" />
+    <Compile Include="InstanceProviderHeader.cs" />
+    <Compile Include="InstanceProviderImpl.cs" />
+    <Compile Include="InstancePlatformImpl.cs" />
+    <Compile Include="InstancePlatformPrivate.cs" />
+    <Compile Include="InstancePlatformPrivateImpl.cs" />
+    <Compile Include="InstanceHeaderPrivate.cs" />
+    <Compile Include="InstanceIncludes.cs" />
+    <Compile Include="ProviderMain.cs" />
+    <Compile Include="ProviderMakefile.cs" />
+    <Compile Include="InstanceHeaderFixture.cs" />
+    <Compile Include="InstanceImplFixture.cs" />
+    <Compile Include="FixtureMain.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management\System.Management.csproj">
+      <Project>{BDB59F30-D79F-4CBF-A8CF-256195287EC2}</Project>
+      <Name>System.Management</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CIMHelper.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CIMHelper.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UNIX_Common.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UNIXProviderBase.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UNIXProviderBase.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="CIMFixtureBase.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
