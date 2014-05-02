@@ -37,8 +37,11 @@
 #define BASE_CLASS_CIM_NAME CIMName(BASE_CLASS_NAME)
 #endif
 
-
-
+#ifdef BASE_BASE_CLASS_NAME
+#ifndef BASE_BASE_CLASS_CIM_NAME
+#define BASE_BASE_CLASS_CIM_NAME CIMName(BASE_BASE_CLASS_NAME)
+#endif
+#endif
 
 #ifndef __checkClass_H
 /*
@@ -54,8 +57,16 @@ NOTES             :
 */
 void UNIX_PROVIDER::_checkClass(CIMName& className)
 {
-  if (!className.equal (CLASS_IMPLEMENTATION_CIM_NAME) &&
-      !className.equal (BASE_CLASS_CIM_NAME))
+  if (className.equal (CLASS_IMPLEMENTATION_CIM_NAME) ||
+#ifdef EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+  	  EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+#endif
+#ifdef BASE_BASE_CLASS_CIM_NAME
+  	className.equal (BASE_BASE_CLASS_CIM_NAME) ||
+#endif
+      className.equal (BASE_CLASS_CIM_NAME))
+      return;
+
     throw CIMNotSupportedException(className.getString() +
         ": Class not supported");
 }
@@ -64,7 +75,7 @@ void UNIX_PROVIDER::_checkClass(CIMName& className)
 #ifndef __invokeMethod_H
 /*
 ================================================================================
-NAME              : _checkClass
+NAME              : invokeMethod
 DESCRIPTION       : tests the argument for valid classname,
                   : throws exception if not
 ASSUMPTIONS       : None
@@ -195,7 +206,6 @@ void UNIX_PROVIDER::getInstance(const OperationContext &ctx,
   String handle;
   int i;
   int keysFound = 0; // this will be used as a bit array
-  CLASS_IMPLEMENTATION _p;
 
   // Validate the classname
   _checkClass(className);
@@ -235,8 +245,11 @@ void UNIX_PROVIDER::getInstance(const OperationContext &ctx,
   /* process handle to an integer.  This is necessary because the   */
   /* handle is the process id on HP-UX which must be passed to      */
   /* pstat_getproc() as an integer.                                 */
-
   bool found = false;
+#ifdef __PROVIDER_PREPARE
+    __PROVIDER_PREPARE(ctx, className, nameSpace, includeQualifiers, includeClassOrigin, _p);
+#endif
+
   if (_p.initialize())
   {
 	  /* Get the process information. */
@@ -260,6 +273,7 @@ void UNIX_PROVIDER::getInstance(const OperationContext &ctx,
 	  handler.complete();
 	  return;
   }
+
   String msg;
   msg.append(handle);
   msg.append(": No such ");
@@ -282,7 +296,6 @@ void UNIX_PROVIDER::enumerateInstances(
     CIMName className;
     CIMInstance instance;
     CIMObjectPath newref;
-    CLASS_IMPLEMENTATION _p;
     className = ref.getClassName();
     CIMNamespaceName nameSpace = ref.getNameSpace();
     int pIndex;
@@ -290,10 +303,21 @@ void UNIX_PROVIDER::enumerateInstances(
     // will call us as natural part of recursing through subtree on
     // enumerate - if we return instances on enumerate of our superclass,
     // there would be dups
+
     if (className.equal (BASE_CLASS_CIM_NAME) ||
+#ifdef EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+  	  EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+#endif
+#ifdef BASE_BASE_CLASS_CIM_NAME
+    	className.equal(BASE_BASE_CLASS_CIM_NAME) ||
+#endif
     	className.equal(CLASS_IMPLEMENTATION_CIM_NAME))
     {
         handler.processing();
+#ifdef __PROVIDER_PREPARE
+        __PROVIDER_PREPARE(
+        context, className, nameSpace, includeQualifiers, includeClassOrigin, _p);
+#endif    
         if (_p.initialize())
         {
 	        for (pIndex = 0; _p.load(pIndex); pIndex++)
@@ -323,20 +347,47 @@ void UNIX_PROVIDER::execQuery(
        InstanceResponseHandler& handler)
 {
 	CIMName className;
-    CLASS_IMPLEMENTATION _p;
     className = objectPath.getClassName();
     CIMNamespaceName nameSpace = objectPath.getNameSpace();
     int pIndex;
+
     // only return instances when enumerate on our subclass, CIMOM
     // will call us as natural part of recursing through subtree on
     // enumerate - if we return instances on enumerate of our superclass,
     // there would be dups
     if (className.equal (CLASS_IMPLEMENTATION_CIM_NAME) ||
+#ifdef EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+  	  EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+#endif
+#ifdef BASE_BASE_CLASS_CIM_NAME
+		className.equal (BASE_BASE_CLASS_CIM_NAME) ||
+#endif
     	className.equal(BASE_CLASS_CIM_NAME))
     {
         handler.processing();
+        #ifdef __PROVIDER_PREPARE
+        __PROVIDER_PREPARE(
+        context, className, nameSpace, true, true, _p);
+
+		#endif       
         if (_p.initialize())
         {
+        	#if defined(CLASS_LOADABLE_BY_NAME)
+        	String queryStatement = query.getQuery();
+        	//TODO: Extract NAME from queryStatement
+        	if (_p.loadByName(queryStatement))
+        	{
+        		CIMInstance ciByName = constructInstance(className,
+	                                           nameSpace,
+	                                           _p);
+	        	if (query.evaluate(ciByName))
+		        {
+		        	handler.deliver(ciByName);
+		        }
+		        return;
+        	}
+        	#endif
+
 	        for (pIndex = 0; _p.load(pIndex); pIndex++)
 	        {
 	        	CIMInstance ci = constructInstance(className,
@@ -378,7 +429,6 @@ void UNIX_PROVIDER::enumerateInstanceNames(const OperationContext &ctx,
                             ObjectPathResponseHandler &handler)
 {
     int pIndex;
-    CLASS_IMPLEMENTATION _p;
     CIMName className = ref.getClassName();
     CIMNamespaceName nameSpace = ref.getNameSpace();
 
@@ -387,12 +437,22 @@ void UNIX_PROVIDER::enumerateInstanceNames(const OperationContext &ctx,
 
     // Notify processing is starting
     handler.processing();
-
     // We are only going to respond to enumeration requests on
     // CLASS_IMPLEMENTATION_CIM_NAME or BASE_CLASS_CIM_NAME
-    if (className.equal (BASE_CLASS_CIM_NAME)
-    || className.equal(CLASS_IMPLEMENTATION_CIM_NAME))
+    if (className.equal (BASE_CLASS_CIM_NAME) ||
+#ifdef EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+  	  EXTRA_CLASS_IMPLEMENTATION_STATEMENTS
+#endif
+#ifdef BASE_BASE_CLASS_CIM_NAME
+     className.equal (BASE_BASE_CLASS_CIM_NAME) ||
+#endif
+    className.equal(CLASS_IMPLEMENTATION_CIM_NAME))
     {
+
+    #ifdef __PROVIDER_PREPARE
+        __PROVIDER_PREPARE(
+        ctx, className, nameSpace, true, true, _p);
+	#endif  
       // Get the process information and deliver an ObjectPath for
       // each process
       // Note that loadProcessInfo modifies pIndex to point to the
@@ -414,11 +474,11 @@ void UNIX_PROVIDER::enumerateInstanceNames(const OperationContext &ctx,
 
     // Notify processing is complete
     handler.complete();
-
     return;
 
 }  // enumerateInstanceNames
 #endif
+
 
 /* Undefine everything */
 #undef UNIX_PROVIDER
@@ -428,6 +488,7 @@ void UNIX_PROVIDER::enumerateInstanceNames(const OperationContext &ctx,
 #undef CLASS_IMPLEMENTATION_NAME
 #undef CLASS_IMPLEMENTATION_CIM_NAME
 #undef BASE_CLASS_NAME
+#undef BASE_BASE_CLASS_NAME
 #undef BASE_CLASS_CIM_NAME
 
 #undef __checkClass_H
@@ -442,3 +503,5 @@ void UNIX_PROVIDER::enumerateInstanceNames(const OperationContext &ctx,
 #undef __enumerateInstances_H
 #undef __execQuery_H
 #undef __enumerateInstanceNames_H
+
+#undef __PROVIDER_PREPARE

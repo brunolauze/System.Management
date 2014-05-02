@@ -1744,7 +1744,7 @@ namespace System.Management.Internal.CimXml
                     case "propagated":
                         newCimProperty.IsPropagated = _mainXmlTextReader.Value;
                         break;
-				case   "embeddedobject":
+					case   "embeddedobject":
 						//TODO: IMPORTANT Console.WriteLine ("Found Embedded Object: " + _mainXmlTextReader.Value);
 						break;
                     default:

@@ -72,13 +72,13 @@ namespace System.Management.Tests
 				}
 				Write ("\n\t\t)\n\t\t\treturn true;\n");
 				WriteLine ("");
-			} 
+			}
 			WriteLine ("\treturn false;");
 			WriteLine ("}");
 			WriteLine ("");
 			WriteLine ("void {0}::setScope(CIMName scope)", ClassName);
 			WriteLine ("{");
-			WriteLine ("\tcurrentScope = scope;");
+			WriteLine ("\tcurrentScope = CIMName(scope.getString());");
 			WriteLine ("}");
 			WriteLine ("");
 		}

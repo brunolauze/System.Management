@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Management.Tests
 {
@@ -29,7 +30,7 @@ namespace System.Management.Tests
 			WriteLine ("CIMInstance {0}Provider::constructInstance(", ClassName);
 			WriteLine ("\tconst CIMName &className,");
 			WriteLine ("\tconst CIMNamespaceName &nameSpace,");
-			WriteLine ("\tconst {0} &_p) const", ClassName);
+			WriteLine ("\tconst {0} &instanceObject) const", ClassName);
 			WriteLine ("{");
 			WriteLine ("\tCIMProperty p;");
 			WriteLine ("");
@@ -38,18 +39,18 @@ namespace System.Management.Tests
 			WriteLine ("\t// Set path");
 			WriteLine ("\tinst.setPath(CIMObjectPath(String(\"\"), // hostname");
 			WriteLine ("\t\t\tnameSpace,");
-			WriteLine ("\t\t\tCIMName(\"{0}\"),", ClassName);
-			WriteLine ("\t\t\tconstructKeyBindings(_p)));");
+			WriteLine ("\t\t\tclassName,");
+			WriteLine ("\t\t\tconstructKeyBindings(instanceObject)));");
 			WriteLine ("");
 
 			List<string> added = new List<string> ();
 			AddProperties (Manifest, added);
-
+			added.Clear ();
 			WriteLine ("");
 			WriteLine ("\treturn inst;");
 			WriteLine ("}");
 			WriteLine ("");
-			WriteLine ("Array<CIMKeyBinding> {0}Provider::constructKeyBindings(const {0}& _p) const", ClassName);
+			WriteLine ("Array<CIMKeyBinding> {0}Provider::constructKeyBindings(const {0}& instanceObject) const", ClassName);
 			WriteLine ("{");
 			WriteLine ("");
 			WriteLine ("\tArray<CIMKeyBinding> keys;");
@@ -61,16 +62,16 @@ namespace System.Management.Tests
 					if (key.Type.ToCimType () == System.Management.Internal.CimType.REFERENCE) {
 						WriteLine ("\tCIMKeyBinding {0}Key(", key.Name.ToString ());
 						WriteLine ("\t\t{0},", GetPropertyDeclaration (key.Name.ToString ()));
-						WriteLine ("\t\tCIMValue(_p.get{0}().getPath()));", key.Name.ToString ());
-						WriteLine ("\t{0}Key.setType(CIMKeyBinding::REFERENCE);");
+						WriteLine ("\t\tCIMValue(instanceObject.get{0}().getPath()));", key.Name.ToString ());
+						WriteLine ("\t{0}Key.setType(CIMKeyBinding::REFERENCE);", key.Name.ToString ());
 						WriteLine ("\tkeys.append({0}Key);", key.Name.ToString ());
 					} else {
 						WriteLine ("\tkeys.append(CIMKeyBinding(");
 						WriteLine ("\t\t{0},", GetPropertyDeclaration (key.Name.ToString ()));
 						if (key.Type == System.Management.Internal.CimType.STRING) {
-							WriteLine ("\t\t_p.get{0}(),", key.Name.ToString ());
+							WriteLine ("\t\tinstanceObject.get{0}(),", key.Name.ToString ());
 						} else {
-							WriteLine ("\t\tCIMValue(_p.get{0}()).toString(),", key.Name.ToString ());
+							WriteLine ("\t\tCIMValue(instanceObject.get{0}()).toString(),", key.Name.ToString ());
 						}
 						WriteLine ("\t\tCIMKeyBinding::{0}));", GetBindingType (key.Type.ToCimType ()));
 					}
@@ -81,6 +82,58 @@ namespace System.Management.Tests
 			WriteLine ("\treturn keys;");
 			WriteLine ("}");
 			WriteLine ("");
+
+			if (GetMethodCount(Manifest) > 0) {
+				WriteLine ("#define __invokeMethod_H");
+				WriteLine ("/*");
+				WriteLine ("================================================================================");
+				WriteLine ("NAME              : invokeMethod");
+				WriteLine ("DESCRIPTION       : invokeMethod for the current instance;");
+				WriteLine ("ASSUMPTIONS       : None");
+				WriteLine ("PRE-CONDITIONS    : ");
+				WriteLine ("POST-CONDITIONS   : ");
+				WriteLine ("NOTES             : ");
+				WriteLine ("================================================================================");
+				WriteLine ("*/");
+				WriteLine ("");
+				WriteLine ("void {0}Provider::invokeMethod(", ClassName);
+				WriteLine ("\tconst OperationContext& context,");
+				WriteLine ("\tconst CIMObjectPath& objectReference,");
+				WriteLine ("\tconst CIMName& methodName,");
+				WriteLine ("\tconst Array<CIMParamValue>& inParameters,");
+				WriteLine ("\tMethodResultResponseHandler& handler)");
+				WriteLine ("{");
+				WriteLine ("\tif (!objectReference.getClassName().equal(\"" + ClassName + "\") && !objectReference.getClassName().equal(\"" + Class.ClassName.ToString() + "\")) {");
+				WriteLine ("\t\tString classMessage;");
+				WriteLine ("\t\tclassMessage.append(\"{0} Provider\");", ClassName);
+				WriteLine ("\t\tclassMessage.append (\" does not support class \");");
+				WriteLine ("\t\tclassMessage.append (objectReference.getClassName().getString());");
+				WriteLine ("\t\tthrow CIMNotSupportedException(classMessage);");
+				WriteLine ("\t}");
+				WriteLine ("");
+				WriteLine ("");
+				WriteLine ("\thandler.processing();");
+
+				WriteLine ("\t// Make cimom handle invokeMethod request with input parameters.");
+				WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
+				WriteLine ("\t\tString(\"\"),");
+				WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
+				WriteLine ("\t\tobjectReference.getClassName(),");
+				WriteLine ("\t\tobjectReference.getKeyBindings());");
+				WriteLine ("\t");
+
+				bool firstMethod = true;
+				WriteMethods (Manifest, firstMethod);
+
+				WriteLine ("\telse {");
+				WriteLine ("\t\tString message;");
+				WriteLine ("\t\tmessage.append(\"{0}\");", ClassName);
+				WriteLine ("\t\tmessage.append (\" does not support invokeMethod\");");
+				WriteLine ("\t\tthrow CIMNotSupportedException(message);");
+				WriteLine ("\t}");
+				WriteLine ("}");
+			}
+
 			WriteLine ("");
 			WriteLine ("");
 			WriteLine("#define UNIX_PROVIDER {0}Provider", ClassName);
@@ -88,21 +141,97 @@ namespace System.Management.Tests
 			WriteLine("#define CLASS_IMPLEMENTATION {0}", ClassName);
 			WriteLine("#define CLASS_IMPLEMENTATION_NAME \"{0}\"", ClassName);
 			WriteLine ("#define BASE_CLASS_NAME \"{0}\"", Manifest.Class.ClassName.ToString());
-			int keyCount = 0;
-			if (Class.HasKeyProperty) {
-				foreach (var p in Class.Properties) {
-					if (p.IsKeyProperty) {
-						keyCount++;
-					}
-				}
+			int keyCount = GetKeyCount(Manifest);
+			WriteLine ("#define NUMKEYS_CLASS_IMPLEMENTATION {0}", keyCount);
+
+			if (DeriveFrom (Manifest, "CIM_ManagedSystemElement")) {
+				WriteLine ("#define CLASS_LOADABLE_BY_NAME 1");
 			}
 
-			WriteLine ("#define NUMKEYS_CLASS_IMPLEMENTATION {0}", keyCount);
 			WriteLine("");
 			WriteLine("");
 			WriteLine("#include \"UNIXProviderBase.hpp\"");
 			WriteLine("");
 		}
+
+		int GetMethodCount (ClassManifest target)
+		{
+			int i = 0;
+			if (target.SuperClass != null)
+				i += GetMethodCount (target.SuperClass);
+			i += target.Class.Methods.Count;
+			return i;
+		}
+
+		void WriteMethods (ClassManifest target, bool firstMethod)
+		{
+			foreach (var method in target.Class.Methods) {
+				WriteLine ("\t" + (firstMethod ? "" : "else ") + "if (methodName.equal(\"" + method.Name + "\")) {");
+				WriteLine ("");
+				WriteLine ("\t\tif (inParameters.size() != " +method.Parameters.Count(x => x.Qualifiers.Any(y => y.Name == "In")).ToString() + ")");
+				WriteLine ("\t\t{");
+				WriteLine ("\t\t\tthrow new CIMOperationFailedException(\"Incorrect in parameters\");");
+				WriteLine ("\t\t}");
+				WriteLine ("\t\t");
+
+				WriteLine ("\t\t//Invoking {0} method.", method.Name);
+				string methodName = "invoke" + method.Name.ToString ();
+				string returnValue = methodName + "ReturnValue";
+				if (method.Type != System.Management.Internal.CimType.CIMNULL) {
+					WriteLine ("\t\t{0} {1};", GetCodeType (method), returnValue);
+				}
+				WriteLine ("");
+				if (method.Parameters.Count > 0) {
+					foreach (var parameter in method.Parameters) {
+						string name = "in" + parameter.Name;
+
+						WriteLine ("\t\t{0} {1};", GetCodeType (parameter), name);
+					}
+					WriteLine ("\t\t");
+
+					WriteLine ("\t\tfor(Uint32 pi = 0; pi < inParameters.size(); pi++) {");
+					WriteLine ("\t\t\tCIMParamValue p = inParameters[pi];");
+					bool firstParam = true;
+					foreach (var parameter in method.Parameters) {
+						string name = "in" + parameter.Name;
+						WriteLine ("\t\t\t{0}if (String::equalNoCase(p.getParameterName(), \"{1}\"))", firstParam ? "" : "else ", parameter.Name);
+						WriteLine ("\t\t\t{");
+						WriteLine ("\t\t\t\tp.getValue().get({0});", name);
+						WriteLine ("\t\t\t}");
+						firstParam = true;
+					}
+					WriteLine ("\t\t}");
+				}
+				WriteLine ("\t\t_p.initialize();");
+				WriteLine ("\t\t_p.find(localReference.getKeyBindings());");
+				WriteLine ("\t\t{0} = _p.{1}({2}", returnValue, methodName, method.Parameters.Count == 0 ? ");" : "\n");
+				bool firstParameter = true;
+				foreach (var parameter in method.Parameters) {
+					string name = "in" + parameter.Name;
+					if (!firstParameter)
+						Write (",\n");
+					Write ("\t\t\t{0}", name);
+					firstParameter = false;
+				}
+				if (method.Parameters.Count > 0)
+					WriteLine ("\n\t\t);");
+
+				WriteLine ("\t\t_p.finalize();");
+				if (method.Type == System.Management.Internal.CimType.CIMNULL) 
+					WriteLine ("\t\thandler.deliver();", returnValue);
+				else
+					WriteLine ("\t\thandler.deliver({0});", returnValue);
+
+				WriteLine ("");
+				WriteLine ("\t}");
+				firstMethod = false;
+			}
+			if (target.SuperClass != null) {
+				WriteMethods (target.SuperClass, firstMethod);
+			}
+		}
+
+
 
 		void AddProperties (ClassManifest manifestItem, List<string> added)
 		{
@@ -111,11 +240,15 @@ namespace System.Management.Tests
 			WriteLine ("\t//{0} Properties", manifestItem.Class.ClassName.ToString ());
 			foreach (var p in manifestItem.Class.Properties) {
 				if (!added.Contains (p.Name.ToString ())) {
-					WriteLine ("\tif (_p.get{0}(p)) inst.addProperty(p);", p.Name.ToString ());
+					WriteLine ("\tif (instanceObject.get{0}(p)) inst.addProperty(p);", p.Name.ToString ());
 					added.Add (p.Name.ToString ());
 				}
 			}
-			WriteLine ("");
+			string currentClassName = CodeWriterBase.GetClassName (manifestItem);
+			if (currentClassName != ClassName)
+				WriteLine ("\tif (className.equal(\"{0}\")) return inst;", currentClassName);
+
+			WriteLine ("\t");
 		}
 
 		static string GetBindingType(System.Management.Internal.CimType type)

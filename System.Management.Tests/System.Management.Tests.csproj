@@ -58,6 +58,15 @@
     <Compile Include="InstanceHeaderFixture.cs" />
     <Compile Include="InstanceImplFixture.cs" />
     <Compile Include="FixtureMain.cs" />
+    <Compile Include="ClassMofImpl.cs" />
+    <Compile Include="RootMakefile.cs" />
+    <Compile Include="FolderMakefile.cs" />
+    <Compile Include="MakFolderCopy.cs" />
+    <Compile Include="ProviderMofImpl.cs" />
+    <Compile Include="SchemaProjectMaker.cs" />
+    <Compile Include="ProviderProjectMaker.cs" />
+    <Compile Include="LicenseFile.cs" />
+    <Compile Include="ClassManagedSchemaImpl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -79,10 +88,43 @@
     <None Include="UNIXProviderBase.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="UNIXProviderBase.cpp">
+    <None Include="CIMFixtureBase.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CIMFixtureBase.h">
+    <None Include="dmifind.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ini.c">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ini.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="pkg_compat.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="smbios.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="smbios.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="tzfile.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="tzfile.hpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="INIReader.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="INIReader.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="openpegasus-providers.sln">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="UNIXProviderBase.hpp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

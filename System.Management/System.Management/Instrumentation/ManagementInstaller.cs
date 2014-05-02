@@ -24,9 +24,9 @@ namespace System.Management.Instrumentation
 				{
 					ManagementInstaller.helpPrinted = true;
 					StringBuilder stringBuilder = new StringBuilder();
-					stringBuilder.Append("/MOF=[filename]\r\n");
-					stringBuilder.Append(string.Concat(" ", RC.GetString("FILETOWRITE_MOF"), "\r\n\r\n"));
-					stringBuilder.Append("/Force or /F\r\n");
+					stringBuilder.Append("/MOF=[filename]\n");
+					stringBuilder.Append(string.Concat(" ", RC.GetString("FILETOWRITE_MOF"), "\n\n"));
+					stringBuilder.Append("/Force or /F\n");
 					stringBuilder.Append(string.Concat(" ", RC.GetString("FORCE_UPDATE")));
 					return string.Concat(stringBuilder.ToString(), base.HelpText);
 				}

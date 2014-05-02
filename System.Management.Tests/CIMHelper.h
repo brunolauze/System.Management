@@ -32,7 +32,8 @@
 #ifndef __CIM_HELPER_H
 #define __CIM_HELPER_H
 #include "UNIX_Common.h"
-
+#include <vector>
+#include <iterator>
 #if defined(PEGASUS_OS_HPUX)
 
 #elif defined(PEGASUS_OS_LINUX)
@@ -59,12 +60,37 @@ class CIMHelper
 public:
 	static String getTimeAsString();
 	static CIMDateTime getCurrentTime();
-	static CIMDateTime getInstallDate();
+	static CIMDateTime getInstallDate(String path);
+	static CIMDateTime getOSInstallDate();
+	static char * ltrim(char *s);
+	static char * rtrim(char *s);
+	static char * trim(char *s);
+	static bool startsWith (char* base, char* str);
+	static bool endsWith (char* base, char* str);
+	static int indexOf (char* base, char* str);
+	static int indexOf (char* base, char* str, int startIndex);
+	static int lastIndexOf (char* base, char* str);
+	static std::string encode(std::string str);
+	static std::string replace( std::string src, std::string const& target, std::string const& repl);
+	static String extractStringParameter(const Array<CIMParamValue>&, String);
+	static Uint32 extractUint32Parameter(const Array<CIMParamValue>& inParameters, String);
+	static CIMDateTime extractDateTimeParameter(const Array<CIMParamValue>& inParameters, String);
+	static CIMInstance extractInstanceParameter(const Array<CIMParamValue>& inParameters, String);
+	static CIMValue getPropertyValue(const CIMInstance&, String name);
+    static String getPropertyAsString(const CIMInstance&, String name);
+    static Array<String> getPropertyAsStringArray(const CIMInstance&, String name);
+    static Uint32 getPropertyAsUint32(const CIMInstance&, String name);
+    static Uint64 getPropertyAsUint64(const CIMInstance&, String name);
+
+    static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+    static std::vector<std::string> split(const std::string &s, char delim);
+
 	static String getHostName();
 	static String getOSName();
 	static String HostName;
 	static String OSName;
 	static String EmptyString;
+	static CIMDateTime NullDate;
 
 #if defined(PEGASUS_OS_HPUX)
 
@@ -90,7 +116,7 @@ public:
 
 
 private:
-
+	static std::string gethex( unsigned int c );
 };
 
 #endif

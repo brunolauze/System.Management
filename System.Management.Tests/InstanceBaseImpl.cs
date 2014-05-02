@@ -41,7 +41,7 @@ namespace System.Management.Tests
 			WriteLine ("\treturn false;");
 			WriteLine ("}");
 			WriteLine ("");
-			WriteLine ("Boolean CIM_ClassBase::find(Array<CIMKeyBinding> &kbArray)");
+			WriteLine ("Boolean CIM_ClassBase::find(const Array<CIMKeyBinding> &kbArray)");
 			WriteLine ("{");
 			WriteLine ("\treturn false;");
 			WriteLine ("}");

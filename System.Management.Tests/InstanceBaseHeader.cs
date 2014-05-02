@@ -28,7 +28,7 @@ namespace System.Management.Tests
 			WriteLine ("\tvirtual Boolean initialize()=0;");
 			WriteLine ("\tvirtual Boolean load(int&)=0;");
 			WriteLine ("\tvirtual Boolean finalize()=0;");
-			WriteLine ("\tvirtual Boolean find(Array<CIMKeyBinding>&)=0;");
+			WriteLine ("\tvirtual Boolean find(const Array<CIMKeyBinding>&)=0;");
 			WriteLine ("\tvirtual Boolean validateKey(CIMKeyBinding&) const=0;");
 			WriteLine ("");
 			WriteLine ("private:");

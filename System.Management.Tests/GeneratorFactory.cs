@@ -19,7 +19,23 @@ namespace System.Management.Tests
 			}
 		}
 
-		private const string BasePath = "/usr/home/bruno/workspace/pegasus-providers.tmp/UNIXProviders/";
+		public static string RootPath
+		{
+			get { return System.IO.Path.Combine (Environment.CurrentDirectory, "openpegasus-providers"); }
+		}
+
+		public static string BasePath
+		{
+			get { return System.IO.Path.Combine (RootPath, "src", "Providers", "UNIXProviders"); }
+		}
+
+		public static string SchemaPath
+		{
+			get { return System.IO.Path.Combine (RootPath, "Schemas"); }
+		}
+
+
+
 
 		public static void Generate(ClassManifest manifest)
 		{
@@ -32,9 +48,13 @@ namespace System.Management.Tests
 				manifest.Class.ClassName.ToString ().Contains ("J2ee") /* DISABLE JAVA */)
 				return;
 
+			Console.WriteLine ("Processing {0}...", CodeWriterBase.GetClassName (manifest));
+
+			ClassMofImpl mofImpl = new ClassMofImpl (manifest, SchemaPath);
+			mofImpl.Write ();
+			ProviderMofImpl provMofImpl = new ProviderMofImpl (manifest, SchemaPath);
+			provMofImpl.Write ();
 			InstanceHeader header = new InstanceHeader (manifest);
-			//if (IsDone (manifest.Class.ClassName.ToString ()))
-			//	return;
 
 			InstanceImpl impl = new InstanceImpl (manifest);
 
@@ -83,9 +103,7 @@ namespace System.Management.Tests
 			string strBasePath = GetBasePath (header.ClassName, manifest.HaveChildren);
 			header.Save(System.IO.Path.Combine(strBasePath, header.ClassName + ".h"));
 			if (manifest.HaveChildren) {
-				// WILL BE TOTALLY ABSTRACT
-				//impl.Write ();
-				//impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + ".cpp"));
+
 			} else {
 				InstancePlatformImpl platformImpl = new InstancePlatformImpl (manifest);
 				platformImpl.Write ();
@@ -107,6 +125,9 @@ namespace System.Management.Tests
 			}
 
 			if (!manifest.HaveChildren) {
+				ProviderMakefile makefile = new ProviderMakefile (manifest);
+				makefile.Write ();
+				makefile.Save(System.IO.Path.Combine (strBasePath, "Makefile"));
 				InstanceProviderHeader providerHeader = new InstanceProviderHeader (manifest);
 				InstanceProviderImpl providerImpl = new InstanceProviderImpl (manifest);
 				providerHeader.Write ();
@@ -171,67 +192,41 @@ namespace System.Management.Tests
 			implFixture.Save(System.IO.Path.Combine(testPath, implFixture.ClassName + "Fixture.cpp"));
 		}
 
-		static void DeleteFiles (string folderName)
-		{
-			if (IsDone ("CIM_" + folderName))
-				return;
-			var headers = System.IO.Directory.GetFiles (folderName, "*.h");
-			var concretes = System.IO.Directory.GetFiles (folderName, "*.cpp");
-			var concretesh = System.IO.Directory.GetFiles (folderName, "*.hpp");
-			foreach (var h in headers) {
-				System.IO.File.Delete (h);
-			}
-			foreach (var c in concretes) {
-				System.IO.File.Delete (c);
-			}
-			foreach (var c in concretesh) {
-				System.IO.File.Delete (c);
-			}
-		}
-
 		public static void Generate(IEnumerable<ClassManifest> manifests)
 		{
 			Classes = manifests;
 			string folderName = BasePath;
-			var folders = System.IO.Directory.GetDirectories (BasePath);
 			string testPath = GetTestPath ();
-			DeleteFiles (testPath);
-			DeleteFiles (folderName);
-			foreach (var f in folders) {
-				//System.IO.Directory.Delete (f, true);
-				DeleteFiles (folderName);
+			if (System.IO.Directory.Exists (RootPath)) {
+				System.IO.Directory.Delete (RootPath, true);
 			}
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "CIMFixtureBase.h"),
-				System.IO.Path.Combine (testPath, "CIMFixtureBase.h"));
+			Console.WriteLine ("Creating Directory : " + RootPath);
+			System.IO.Directory.CreateDirectory (RootPath);
+			System.IO.Directory.CreateDirectory (System.IO.Path.Combine (RootPath, "src"));
+			System.IO.Directory.CreateDirectory (System.IO.Path.Combine (RootPath, "src", "Providers"));
+			System.IO.Directory.CreateDirectory (BasePath);
+			System.IO.Directory.CreateDirectory (SchemaPath);
+			System.IO.Directory.CreateDirectory (System.IO.Path.Combine (BasePath, "tests"));
+			System.IO.Directory.CreateDirectory (testPath);
+			List<string> baseFiles = new List<string> ();
+			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.h"));
+			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.c"));
+			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.hpp"));
+			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.hxx"));
+			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.cpp"));
 
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "CIMHelper.h"),
-				System.IO.Path.Combine (BasePath, "CIMHelper.h"));
+			foreach (var baseFile in baseFiles) {
+				System.IO.File.Copy (baseFile, 
+					System.IO.Path.Combine (BasePath, new System.IO.FileInfo (baseFile).Name));
+			}
 
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "CIMHelper.cpp"),
-				System.IO.Path.Combine (BasePath, "CIMHelper.cpp"));
-
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "UNIX_Common.h"),
-				System.IO.Path.Combine (BasePath, "UNIX_Common.h"));
-
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "UNIXProviderBase.h"),
-				System.IO.Path.Combine (BasePath, "UNIXProviderBase.h"));
-
-			System.IO.File.Copy (
-				System.IO.Path.Combine (Environment.CurrentDirectory, "UNIXProviderBase.cpp"),
-				System.IO.Path.Combine (BasePath, "UNIXProviderBase.hpp"));
+			System.IO.File.Copy (System.IO.Path.Combine (Environment.CurrentDirectory, "openpegasus-providers.sln"),
+				System.IO.Path.Combine (RootPath, "openpegasus-providers.sln"));
 
 			InstanceBaseHeader baseHeader = new InstanceBaseHeader ();
-			//InstanceBaseImpl baseImpl = new InstanceBaseImpl ();
 
 			baseHeader.Write ();
-			//baseImpl.Write ();
 			baseHeader.Save(System.IO.Path.Combine(BasePath, "CIM_ClassBase.h"));
-			//baseImpl.Save(System.IO.Path.Combine(BasePath, "CIM_ClassBase.cpp"));
 
 			foreach (var manifest in manifests) {
 				Generate (manifest);
@@ -243,6 +238,54 @@ namespace System.Management.Tests
 			FixtureMain fixtureMain = new FixtureMain ();
 			fixtureMain.Write ();
 			fixtureMain.Save(System.IO.Path.Combine(testPath, "main.cpp"));
+
+			RootMakefile rootMakefile = new RootMakefile ();
+			rootMakefile.Write ();
+			rootMakefile.Save(System.IO.Path.Combine(RootPath, "Makefile"));
+
+			FolderMakefile srcMakefile = new FolderMakefile ("..", "Providers");
+			srcMakefile.Write ();
+			srcMakefile.Save(System.IO.Path.Combine(RootPath, "src", "Makefile"));
+
+			FolderMakefile provMakefile = new FolderMakefile ("../..", "UNIXProviders");
+			provMakefile.Write ();
+			provMakefile.Save(System.IO.Path.Combine(RootPath, "src", "Providers", "Makefile"));
+
+			AddProviderMakefile (manifests);
+			string makPath = System.IO.Path.Combine(new System.IO.DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "mak");
+			MakFolderCopy.DirectoryCopy (makPath, System.IO.Path.Combine(BasePath, "mak"), true);
+
+			SchemaProjectMaker schemaProject = new SchemaProjectMaker (SchemaPath);
+			schemaProject.Write ();
+
+			ClassManagedSchemaImpl classManagedSystem = new ClassManagedSchemaImpl (false);
+			classManagedSystem.Write ();
+			classManagedSystem.Save (System.IO.Path.Combine (SchemaPath, "UNIX_ManagedSystemSchema20.mof"));
+			ClassManagedSchemaImpl provManagedSystem = new ClassManagedSchemaImpl (true);
+			provManagedSystem.Write ();
+			provManagedSystem.Save (System.IO.Path.Combine (SchemaPath, "UNIX_ManagedSystemSchema20R.mof"));
+
+			ProviderProjectMaker providerProject = new ProviderProjectMaker (BasePath, false);
+			providerProject.Write ();
+			ProviderProjectMaker providerTestProject = new ProviderProjectMaker (testPath, true);
+			providerTestProject.Write ();
+			LicenseFile license = new LicenseFile ();
+			license.Write ();
+			license.Save(System.IO.Path.Combine(RootPath, "LICENSE"));
+
+			System.IO.File.WriteAllText (System.IO.Path.Combine (RootPath, "env_var.status"), "#Defines variables");
+		}
+
+		private static void AddProviderMakefile(IEnumerable<ClassManifest> manifests)
+		{
+			var sb = new System.Text.StringBuilder ("\\\n");
+			foreach (var manifest in manifests) {
+				sb.AppendLine ("\t" + manifest.Class.ClassName.ToString ().Replace ("CIM_", "").Replace ("UNIX_", "") + "\\");
+			}
+			FolderMakefile provMakefile = new FolderMakefile ("../../..", sb.ToString());
+			provMakefile.Write ();
+			provMakefile.Save(System.IO.Path.Combine(BasePath, "Makefile"));
+
 		}
 
 		private static string GetBasePath(string name, bool haveChildren)
@@ -259,7 +302,7 @@ namespace System.Management.Tests
 
 		private static string GetTestPath()
 		{
-			return System.IO.Path.Combine(new System.IO.DirectoryInfo (BasePath).Parent.FullName, "tests", "UNIXProviders.Tests");
+			return System.IO.Path.Combine(BasePath, "tests", "UNIXProviders.Tests");
 		}
 
 		public static string[] ClassesDone = new string[] {
@@ -273,9 +316,12 @@ namespace System.Management.Tests
 
 		public static bool IsDone (string className)
 		{
+			return false;
+			/*
 			if (ClassesDone.Contains (className))
 				return true;
 			return false;
+			*/
 		}
 	}
 }

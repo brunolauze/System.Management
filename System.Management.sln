@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Management", "System
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Management.Tests", "System.Management.Tests\System.Management.Tests.csproj", "{9967229A-334D-4ADF-965E-49B449A002E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementConsole", "..\..\..\..\usr\home\bruno\Projects\System.Management\ManagementConsole\ManagementConsole.csproj", "{9AFA4937-35B9-4E96-B5A7-0C0B540C650E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,12 +17,16 @@ Global
 		{9967229A-334D-4ADF-965E-49B449A002E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9967229A-334D-4ADF-965E-49B449A002E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9967229A-334D-4ADF-965E-49B449A002E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AFA4937-35B9-4E96-B5A7-0C0B540C650E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AFA4937-35B9-4E96-B5A7-0C0B540C650E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AFA4937-35B9-4E96-B5A7-0C0B540C650E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AFA4937-35B9-4E96-B5A7-0C0B540C650E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BDB59F30-D79F-4CBF-A8CF-256195287EC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDB59F30-D79F-4CBF-A8CF-256195287EC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDB59F30-D79F-4CBF-A8CF-256195287EC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDB59F30-D79F-4CBF-A8CF-256195287EC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = System.Management\System.Management.csproj
+		StartupItem = ..\..\..\..\usr\home\bruno\Projects\System.Management\ManagementConsole\ManagementConsole.csproj
 	EndGlobalSection
 EndGlobal

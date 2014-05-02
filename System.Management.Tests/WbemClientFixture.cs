@@ -12,19 +12,23 @@ namespace System.Management.Tests
 		[Test ()]
 		public void BuildProviders ()
 		{
-			WbemClient client = new WbemClient ("localhost", null, "root/cimv2");
+			WbemClient client = new WbemClient ("localhost", new System.Net.NetworkCredential("bruno", "P0l3n0rd"), "root/cimv2");
 			client.IsSecure = false;
 
 			var classes = new Dictionary<CimName, ClassManifest> ();
 
 			ProcessClass (client, new CimName ("CIM_ManagedElement"), null, classes);
 			ProcessClass (client, new CimName ("CIM_Indication"), null, classes);
+			ProcessClass (client, new CimName ("CIM_AbstractComponent"), null, classes);
+			ProcessClass (client, new CimName ("CIM_AbstractElementStatisticalData"), null, classes);
+			ProcessClass (client, new CimName ("CIM_AbstractIndicationSubscription"), null, classes);
 			ProcessClass (client, new CimName ("CIM_Component"), null, classes);
 			ProcessClass (client, new CimName ("CIM_LogicalIdentity"), null, classes);
 			ProcessClass (client, new CimName ("CIM_ElementSettingData"), null, classes);
 			ProcessClass (client, new CimName ("CIM_Statistics"), null, classes);
 			ProcessClass (client, new CimName ("CIM_MemberOfCollection"), null, classes);
 			ProcessClass (client, new CimName ("CIM_Dependency"), null, classes);
+			ProcessClass (client, new CimName ("CIM_CredentialManagementCapabilities"), null, classes);
 
 			foreach(var c in client.EnumerateClasses ())
 			{
@@ -50,6 +54,7 @@ namespace System.Management.Tests
 			}
 			*/
 
+			/*
 			foreach (var c in classes) {
 				Console.WriteLine (c.Value.Class.ClassName);
 				Console.WriteLine ("\tSuperClass: " + c.Value.Class.SuperClass.ToString ());
@@ -57,8 +62,12 @@ namespace System.Management.Tests
 					Console.WriteLine ("\t" + p.Name + " Type: " + p.Type);
 				}
 			}
+			*/
+
 			GeneratorFactory.Generate(classes.Where(x => !x.Key.ToString().StartsWith("UNIX_") && 
 				!x.Key.ToString ().StartsWith("PG_") &&
+				!x.Key.ToString ().Contains("Picker") &&
+				!x.Key.ToString ().Contains("ChangerDevice") &&
 				!x.Key.ToString ().StartsWith("PRS_") &&
 				!x.Key.ToString ().Contains("SNMP") &&
 				!x.Key.ToString ().Contains("UnitOfWork") &&
@@ -107,6 +116,8 @@ namespace System.Management.Tests
 					}
 				}
 			}
+			if (classItem.ClassName.ToString ().Contains("Abstract") || BaseClasses.Contains (classItem.ClassName.ToString ()))
+				haveChildren = true;
 			FixSuperClass (superClass);
 			var manifest = new ClassManifest (classItem, superClass, haveChildren);
 			if (!classes.ContainsKey(cimName))
@@ -117,6 +128,11 @@ namespace System.Management.Tests
 			}
 		}
 
+		private static string[] BaseClasses = new string[] {
+			"CIM_StorageVolume",
+			"CIM_POTSModem"
+		};
+
 		private static string[] ClassExceptions = new string[] {
 			"CIM_ApplicationSystem",
 			"CIM_SoftwareElement",
@@ -124,6 +140,13 @@ namespace System.Management.Tests
 			"CIM_FileSystem",
 			"CIM_NetworkPort",
 			"CIM_EthernetPort",
+			"CIM_CredentialManagementCapabilities",
+			"CIM_KeyBasedCredentialManagementService",
+			"CIM_DisplayController",
+			"CIM_PolicyGroup",
+			"CIM_PowerSupply",
+			"CIM_USBDevice",
+			"CIM_ConcreteJob"
 		};
 
 		static void FixSuperClass (ClassManifest superClass)
@@ -133,8 +156,6 @@ namespace System.Management.Tests
 			if (ClassExceptions.Contains(superClass.Class.ClassName.ToString ()))
 				superClass.Class.ClassName = new System.Management.Internal.CimName(superClass.Class.ClassName.ToString().Replace("CIM_", "UNIX_"));
 		}
-
-		private 
 
 		static bool IsException (CimName cimName)
 		{
