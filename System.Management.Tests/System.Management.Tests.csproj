@@ -32,6 +32,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ManagementObjectFixture.cs" />
@@ -67,6 +69,8 @@
     <Compile Include="ProviderProjectMaker.cs" />
     <Compile Include="LicenseFile.cs" />
     <Compile Include="ClassManagedSchemaImpl.cs" />
+    <Compile Include="TemplateFactory.cs" />
+    <Compile Include="ClassTemplate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -127,5 +131,8 @@
     <None Include="UNIXProviderBase.hpp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Templates\" />
   </ItemGroup>
 </Project>

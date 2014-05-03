@@ -23,7 +23,7 @@ namespace System.Management.Tests
 					WriteLine ("/* **** " + qualifier.Name + " *** */");
 					WriteLine ("/*");
 					foreach (var descVal in qualifier.Values) {
-						WriteLine (descVal);
+						WriteLine (descVal.Replace("/*", "").Replace("*/", "\n  "));
 					}
 					WriteLine ("*/");
 					WriteLine ("");

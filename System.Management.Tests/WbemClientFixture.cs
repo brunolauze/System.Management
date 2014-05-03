@@ -130,7 +130,15 @@ namespace System.Management.Tests
 
 		private static string[] BaseClasses = new string[] {
 			"CIM_StorageVolume",
-			"CIM_POTSModem"
+			"CIM_POTSModem",
+			"CIM_Process",
+			"CIM_Thread",
+			"CIM_ProcessStatistics",
+			"CIM_ProcessStatisticalInformation",
+			"CIM_LocalFileSystem",
+			"CIM_File",
+			"CIM_DeviceFile",
+			"CIM_Directory"
 		};
 
 		private static string[] ClassExceptions = new string[] {

@@ -422,7 +422,7 @@ namespace System.Management.Tests
 					} else if (newType == CimType.Reference) {
 						System.Management.Internal.CimPropertyReference refProp = p as System.Management.Internal.CimPropertyReference;
 						if (DeriveFrom (Manifest, "CIM_Dependency")) {
-							string nameDep = refProp.ReferenceClass.ToString();
+							string nameDep = refProp.ReferenceClass.ToString().Replace("CIM_", "").Replace("UNIX_", "");
 							nameDep = privateProperty + nameDep;
 							return privateProperty + " = " + nameDep + "Provider.constructInstance(\n\t\tCIMName(\"" + refProp.ReferenceClass.ToString().Replace("CIM_", "UNIX_") + "\"),\n\t\tCIMNamespaceName(\"root/cimv2\"),\n\t\t" + nameDep + ");";
 						} else {
