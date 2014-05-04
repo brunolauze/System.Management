@@ -138,6 +138,8 @@ namespace System.Management.Tests
 			WriteMethods (Manifest, added);
 			if (added.Count > 0) WriteLine ("");
 			added.Clear();
+			AddPlatformPublic ();
+			WriteLine ("");
 			WriteLine ("private:");
 			if (!Manifest.HaveChildren) {
 				WriteLine ("\tCIMName currentScope;");
@@ -265,6 +267,33 @@ namespace System.Management.Tests
 			}
 
 		}
+
+		void AddPlatformPublic ()
+		{
+			AddPlatformPublic ("FREEBSD");
+			AddPlatformPublic ("LINUX");
+			AddPlatformPublic ("ZOS");
+			AddPlatformPublic ("WIN32");
+			AddPlatformPublic ("SOLARIS");
+			AddPlatformPublic ("HPUX");
+			AddPlatformPublic ("VMS");
+			AddPlatformPublic ("TRU64");
+			AddPlatformPublic ("DARWIN");
+			AddPlatformPublic ("AIX");
+			AddPlatformPublic ("STUB");
+		}
+
+		void AddPlatformPublic (string os)
+		{
+			string template = TemplateFactory.GetPublic (ClassName, os);
+			if (!string.IsNullOrEmpty (template)) {
+				WriteLine ("#if PEGASUS_OS_" + os);
+				WriteLine (template);
+				WriteLine ("#endif");
+				WriteLine ("");
+			}
+		}
+
 	}
 }
 

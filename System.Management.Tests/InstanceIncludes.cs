@@ -14,6 +14,7 @@ namespace System.Management.Tests
 
 		public override void Write ()
 		{
+			WriteLicense ();
 			if (string.IsNullOrEmpty (os)) {
 				WriteLine ("");
 				WriteLine ("#if defined(PEGASUS_OS_HPUX)");
@@ -40,7 +41,14 @@ namespace System.Management.Tests
 			} else {
 				WriteLine ("#if defined(PEGASUS_OS_{0})", os);
 				WriteLine ("");
-				WriteLine ("");
+
+				string specific = TemplateFactory.GetDependencies (ClassName, os);
+				if (!string.IsNullOrEmpty (specific)) {
+					WriteLine (specific);
+				}
+				else 
+					WriteLine ("");
+
 				WriteLine ("");
 				WriteLine ("#endif");
 			}

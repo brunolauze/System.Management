@@ -29,7 +29,7 @@ namespace System.Management.Tests
 			sb = new StringBuilder ();
 		}
 
-		public void Save(string filePath)
+		public virtual void Save(string filePath)
 		{
 			System.IO.File.WriteAllText (filePath, sb.ToString ());
 		}
@@ -245,7 +245,11 @@ namespace System.Management.Tests
 
 		protected void DefineProperty(string name)
 		{
-			sb.AppendFormat ("#define {0}\t\t\t\t\"{1}\"\n", GetPropertyDeclaration (name), name);
+			string decl = GetPropertyDeclaration (name);
+			sb.AppendFormat ("#ifndef {0}\n", decl);
+			sb.AppendFormat ("#define {0} \\\n\t\t\t\t\t\"{1}\"\n", decl, name);
+			sb.AppendLine ("#endif");
+			sb.AppendLine ();
 		}
 
 		protected void DefinePropertyGetter(CimProperty p)
@@ -421,19 +425,42 @@ namespace System.Management.Tests
 						return privateProperty + " = Boolean(false);";
 					} else if (newType == CimType.Reference) {
 						System.Management.Internal.CimPropertyReference refProp = p as System.Management.Internal.CimPropertyReference;
-						if (DeriveFrom (Manifest, "CIM_Dependency")) {
-							string nameDep = refProp.ReferenceClass.ToString().Replace("CIM_", "").Replace("UNIX_", "");
-							nameDep = privateProperty + nameDep;
-							return privateProperty + " = " + nameDep + "Provider.constructInstance(\n\t\tCIMName(\"" + refProp.ReferenceClass.ToString().Replace("CIM_", "UNIX_") + "\"),\n\t\tCIMNamespaceName(\"root/cimv2\"),\n\t\t" + nameDep + ");";
-						} else {
-							return string.Format (privateProperty + " = CIMInstance(CIMName(\"{0}\"));", refProp.ReferenceClass);
+						var refName = GetConcreteClass (refProp.ReferenceClass.ToString ());
+						if (!string.IsNullOrEmpty (refName)) {
+							if (DeriveFrom (Manifest, "CIM_Dependency")) {
+								string nameDep = refName.Replace ("CIM_", "").Replace ("UNIX_", "");
+								nameDep = privateProperty + nameDep;
+								return privateProperty + " = " + nameDep + "Provider.constructInstance(\n\t\tCIMName(\"" + refName.Replace ("CIM_", "UNIX_") + "\"),\n\t\tCIMNamespaceName(\"root/cimv2\"),\n\t\t" + nameDep + ");";
+							} else {
+								return string.Format (privateProperty + " = CIMInstance(CIMName(\"{0}\"));", refName);
+							}
 						}
+						return "";
 					} else if (newType == CimType.Object) {
 						return privateProperty + " = NULL;";
 					}
 				}
 			}
 			return privateProperty + " = NULL;";
+		}
+
+		private string GetConcreteClass (string str)
+		{
+			if (str == "CIM_System")
+				return "UNIX_ComputerSystem";
+
+			var current = GeneratorFactory.Classes.FirstOrDefault (x => x.Class.ClassName == str);
+			if (current != null) {
+				if (current.HaveChildren) {
+					foreach (var manifestItem in GeneratorFactory.Classes) {
+						if (DeriveFrom (manifestItem, str) && !manifestItem.HaveChildren) {
+							return FixExceptions(manifestItem.Class.ClassName.ToString());
+						}
+					}
+				}
+				return FixExceptions(current.Class.ClassName.ToString());
+			}
+			return null;
 		}
 
 		protected string GetDefaultValue (string privateProperty, CimMethod method)

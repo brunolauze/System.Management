@@ -14,8 +14,9 @@ namespace System.Management.Tests
 
 		public override void Write ()
 		{
-			WriteLine ("#ifdef PEGASUS_OS_" + os.ToUpper ());
+			WriteLicense ();
 			WriteLine ("");
+			WriteLine ("#ifdef PEGASUS_OS_" + os.ToUpper ());
 			WriteLine ("");
 			WriteLine ("");
 			WriteLine ("#endif");

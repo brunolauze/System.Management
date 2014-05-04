@@ -50,7 +50,7 @@ namespace System.Management.Tests
 
 			WriteLine ("\t-lutil \\");
 			WriteLine ("\t-lkvm");
-
+			WriteLine ("");
 
 			WriteLine ("include $(ROOT)/mak/dynamic-library.mak");
 			WriteLine ("");

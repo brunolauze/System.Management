@@ -56,7 +56,6 @@ namespace System.Management.Tests
 			provMofImpl.Write ();
 			InstanceHeader header = new InstanceHeader (manifest);
 
-			InstanceImpl impl = new InstanceImpl (manifest);
 
 			if (!manifest.HaveChildren) {
 				if (!IsDone(manifest.Class.ClassName.ToString())) {
@@ -107,20 +106,19 @@ namespace System.Management.Tests
 			} else {
 				InstancePlatformImpl platformImpl = new InstancePlatformImpl (manifest);
 				platformImpl.Write ();
-				platformImpl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + ".cpp"));
+				platformImpl.Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + ".cpp"));
 				if (!IsDone(manifest.Class.ClassName.ToString())) {
-					impl.Write ();
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_FREEBSD.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_LINUX.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_ZOS.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_WIN32.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_SOLARIS.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_HPUX.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_VMS.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_TRU64.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_DARWIN.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_AIX.hpp"));
-					impl.Save (System.IO.Path.Combine (strBasePath, impl.ClassName + "_STUB.hpp"));
+					new InstanceImpl (manifest, "FREEBSD").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_FREEBSD.hpp"));
+					new InstanceImpl (manifest, "LINUX").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_LINUX.hpp"));
+					new InstanceImpl (manifest, "ZOS").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_ZOS.hpp"));
+					new InstanceImpl (manifest, "WIN32").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_WIN32.hpp"));
+					new InstanceImpl (manifest, "SOLARIS").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_SOLARIS.hpp"));
+					new InstanceImpl (manifest, "HPUX").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_HPUX.hpp"));
+					new InstanceImpl (manifest, "VMS").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_VMS.hpp"));
+					new InstanceImpl (manifest, "TRU64").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_TRU64.hpp"));
+					new InstanceImpl (manifest, "DARWIN").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_DARWIN.hpp"));
+					new InstanceImpl (manifest, "AIX").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_AIX.hpp"));
+					new InstanceImpl (manifest, "STUB").Save (System.IO.Path.Combine (strBasePath, platformImpl.ClassName + "_STUB.hpp"));
 				}
 			}
 
