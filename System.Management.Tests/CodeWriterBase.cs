@@ -302,7 +302,17 @@ namespace System.Management.Tests
 			return names;
 		}
 
-		protected bool DeriveFrom(ClassManifest manifestItem, string name)
+		public static bool IsOrDeriveFrom(ClassManifest manifestItem, string name)
+		{
+			if (manifestItem.Class.ClassName == name) return true;
+			if (DeriveFrom(manifestItem,  name))
+			{
+				return true;
+			}
+			return false;
+		}
+
+		protected static bool DeriveFrom(ClassManifest manifestItem, string name)
 		{
 			if (manifestItem.SuperClass == null)
 				return false;
@@ -369,22 +379,22 @@ namespace System.Management.Tests
 			if (name == "OSName") {
 				return privateProperty + " = CIMHelper::OSName;";
 			}
-			if (name == "Status") {
+			if (name == "Status" && p.Type == System.Management.Internal.CimType.STRING) {
 				return privateProperty + " = String(DEFAULT_STATUS);";
 			}
-			if (name == "ComminucationStatus") {
+			if (name == "ComminucationStatus" && p.Type == System.Management.Internal.CimType.UINT16) {
 				return privateProperty + " = Uint16(DEFAULT_COMMUNICATION_STATUS);";
 			}
-			if (name == "OperatingStatus") {
+			if (name == "OperatingStatus" && p.Type == System.Management.Internal.CimType.UINT16) {
 				return privateProperty + " = Uint16(DEFAULT_OPERATING_STATUS);";
 			}
-			if (name == "HealthState") {
+			if (name == "HealthState" && p.Type == System.Management.Internal.CimType.UINT16) {
 				return privateProperty + " = Uint16(DEFAULT_HEALTH_STATE);";
 			}
-			if (name == "PrimaryStatus") {
-				return privateProperty + " =Uint16(DEFAULT_PRIMARY_STATUS);";
+			if (name == "PrimaryStatus" && p.Type == System.Management.Internal.CimType.UINT16) {
+				return privateProperty + " = Uint16(DEFAULT_PRIMARY_STATUS);";
 			}
-			if (name == "EnabledState") {
+			if (name == "EnabledState" && p.Type == System.Management.Internal.CimType.UINT16) {
 				return privateProperty + " = Uint16(DEFAULT_ENABLED_STATE);";
 			}
 			bool isArray = (p as CimPropertyArray) != null;

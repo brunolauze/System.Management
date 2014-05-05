@@ -20,7 +20,9 @@ namespace System.Management.Tests
 			WriteLine ("");
 			WriteLine ("ROOT = {0}", root);
 			WriteLine ("include $(ROOT)/mak/config.mak");
-			WriteLine ("DIRS = ", folderNames);
+			WriteLine ("");
+			WriteLine ("DIRS = {0}", folderNames);
+			WriteLine ("");
 			WriteLine ("include $(ROOT)/mak/recurse.mak");
 		}
 

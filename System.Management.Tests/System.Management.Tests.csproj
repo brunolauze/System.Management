@@ -71,6 +71,9 @@
     <Compile Include="ClassManagedSchemaImpl.cs" />
     <Compile Include="TemplateFactory.cs" />
     <Compile Include="ClassTemplate.cs" />
+    <Compile Include="SingleProviderProjectMaker.cs" />
+    <Compile Include="SolutionFileCreator.cs" />
+    <Compile Include="SolutionItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -123,9 +126,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="INIReader.h">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="openpegasus-providers.sln">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="UNIXProviderBase.hpp">

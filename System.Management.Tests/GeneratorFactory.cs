@@ -35,7 +35,7 @@ namespace System.Management.Tests
 		}
 
 
-
+		private static List<SolutionItem> projects = new List<SolutionItem> ();
 
 		public static void Generate(ClassManifest manifest)
 		{
@@ -132,6 +132,9 @@ namespace System.Management.Tests
 				providerImpl.Write ();
 				providerHeader.Save (System.IO.Path.Combine (strBasePath, providerHeader.ClassName + "Provider.h"));
 				providerImpl.Save (System.IO.Path.Combine (strBasePath, providerImpl.ClassName + "Provider.cpp"));
+				SingleProviderProjectMaker projectMaker = new SingleProviderProjectMaker (manifest, BasePath);
+				projectMaker.Write ();
+				projects.Add(projectMaker.Project);
 			}
 		}
 
@@ -218,9 +221,6 @@ namespace System.Management.Tests
 					System.IO.Path.Combine (BasePath, new System.IO.FileInfo (baseFile).Name));
 			}
 
-			System.IO.File.Copy (System.IO.Path.Combine (Environment.CurrentDirectory, "openpegasus-providers.sln"),
-				System.IO.Path.Combine (RootPath, "openpegasus-providers.sln"));
-
 			InstanceBaseHeader baseHeader = new InstanceBaseHeader ();
 
 			baseHeader.Write ();
@@ -251,7 +251,7 @@ namespace System.Management.Tests
 
 			AddProviderMakefile (manifests);
 			string makPath = System.IO.Path.Combine(new System.IO.DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "mak");
-			MakFolderCopy.DirectoryCopy (makPath, System.IO.Path.Combine(BasePath, "mak"), true);
+			MakFolderCopy.DirectoryCopy (makPath, System.IO.Path.Combine(RootPath, "mak"), true);
 
 			SchemaProjectMaker schemaProject = new SchemaProjectMaker (SchemaPath);
 			schemaProject.Write ();
@@ -263,10 +263,15 @@ namespace System.Management.Tests
 			provManagedSystem.Write ();
 			provManagedSystem.Save (System.IO.Path.Combine (SchemaPath, "UNIX_ManagedSystemSchema20R.mof"));
 
-			ProviderProjectMaker providerProject = new ProviderProjectMaker (BasePath, false);
+			ProviderProjectMaker providerProject = new ProviderProjectMaker (BasePath, false, projects);
 			providerProject.Write ();
-			ProviderProjectMaker providerTestProject = new ProviderProjectMaker (testPath, true);
+			ProviderProjectMaker providerTestProject = new ProviderProjectMaker (testPath, true, projects);
 			providerTestProject.Write ();
+
+			SolutionFileCreator slnCreator = new SolutionFileCreator (projects);
+			slnCreator.Write ();
+			slnCreator.Save (System.IO.Path.Combine (RootPath, "openpegasus-providers.sln"));
+		
 			LicenseFile license = new LicenseFile ();
 			license.Write ();
 			license.Save(System.IO.Path.Combine(RootPath, "LICENSE"));

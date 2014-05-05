@@ -66,6 +66,8 @@ namespace System.Management.Tests
 
 			GeneratorFactory.Generate(classes.Where(x => !x.Key.ToString().StartsWith("UNIX_") && 
 				!x.Key.ToString ().StartsWith("PG_") &&
+				!CodeWriterBase.IsOrDeriveFrom(x.Value, "CIM_Indication") &&
+				!CodeWriterBase.IsOrDeriveFrom(x.Value, "CIM_AbstractIndicationSubscription") &&
 				!x.Key.ToString ().Contains("Picker") &&
 				!x.Key.ToString ().Contains("ChangerDevice") &&
 				!x.Key.ToString ().StartsWith("PRS_") &&

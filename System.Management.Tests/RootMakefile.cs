@@ -19,7 +19,7 @@ namespace System.Management.Tests
 			WriteLine ("DIRS = \\");
 			WriteLine ("\tsrc \\");
 			WriteLine ("\tSchemas");
-
+			WriteLine ("");
 			WriteLine ("include $(ROOT)/mak/recurse.mak");
 
 			WriteLine (".PHONY: FORCE");

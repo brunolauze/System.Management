@@ -335,7 +335,7 @@ namespace System.Management.Tests
 						if (p.Type == System.Management.Internal.CimType.STRING) {
 							WriteLine ("\t\t{3}(String::equalNoCase(get{0}(), {1})){2}", p.Name, keyName, i == keys.Count () - 1 ? ")" : " && ", i == 0 ? "if (" : "\t");
 						} else if (p.Type == System.Management.Internal.CimType.DATETIME) {
-							WriteLine ("\t\t{3}(String::equalNoCase(get{0}())toString(), {1})){2}", p.Name, keyName, i == keys.Count () - 1 ? ")" : " && ", i == 0 ? "if (" : "\t");
+							WriteLine ("\t\t{3}(String::equalNoCase(get{0}().toString(), {1})){2}", p.Name, keyName, i == keys.Count () - 1 ? ")" : " && ", i == 0 ? "if (" : "\t");
 						}
 						else if (p.Type != System.Management.Internal.CimType.CIMNULL && p.Type != System.Management.Internal.CimType.REFERENCE) {
 							WriteLine ("\t\t{3}(String::equalNoCase(String(std::to_string(get{0}()).c_str()), {1})){2}", p.Name, keyName, i == keys.Count () - 1 ? ")" : " && ", i == 0 ? "if (" : "\t");
