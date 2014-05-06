@@ -24,6 +24,8 @@ namespace System.Management.Tests
 			WriteLine ("LIBRARY = {0}Provider", ClassName);
 			WriteLine ("EXTRA_INCLUDES += -I/usr/local/include -I./..");
 			WriteLine ("");
+			WriteLine ("DEFINES += -DPROVIDER_LIB_NS=\\\"namespace " + ClassName + "Lib {\\\"");
+			WriteLine ("");
 			WriteLine ("SOURCES = \\");
 			WriteLine ("\t../CIMHelper.cpp \\");
 			WriteLine ("\t{0}.cpp", ClassName);
@@ -34,7 +36,6 @@ namespace System.Management.Tests
 			AddPlatformSources (ClassName);
 			List<string> added = new List<string> ();
 			AddExtraSources (Manifest, added);
-
 
 			WriteLine ("EXTRA_LIBRARIES = \\");
 			WriteLine ("\t-lpegprovider \\");

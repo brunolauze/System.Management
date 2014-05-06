@@ -38,6 +38,21 @@ namespace System.Management.Tests
 		{
 			get;set;
 		}
+
+		public string CreateInstance
+		{
+			get;set;
+		}
+
+		public string DeleteInstance
+		{
+			get;set;
+		}
+
+		public string ModifyInstance
+		{
+			get;set;
+		}
 	}
 }
 

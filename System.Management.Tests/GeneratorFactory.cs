@@ -201,6 +201,10 @@ namespace System.Management.Tests
 			headerFixture.Save(System.IO.Path.Combine(providerTestPath, headerFixture.ClassName + "Fixture.h"));
 			implFixture.Save(System.IO.Path.Combine(providerTestPath, implFixture.ClassName + "Fixture.cpp"));
 
+			TestScriptMaker script = new TestScriptMaker (manifest);
+			script.Write ();
+			script.Save(System.IO.Path.Combine(providerTestPath, "RunTest" + CodeWriterBase.GetClassName(manifest) + ".sh"));
+
 			SingleFixtureCreator main = new SingleFixtureCreator (manifest);
 			main.Write ();
 			main.Save (System.IO.Path.Combine (providerTestPath, "main.cpp"));

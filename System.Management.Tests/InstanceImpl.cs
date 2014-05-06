@@ -25,6 +25,8 @@ namespace System.Management.Tests
 			WriteLicense ();
 			WriteLine ("");
 			WriteLine ("");
+			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+			WriteLine ("");
 			if (Manifest.HaveChildren) {
 				WriteLine ("#include \"{0}.h\"", ClassName);
 				WriteLine ("");
@@ -34,7 +36,7 @@ namespace System.Management.Tests
 				WriteLine (declSpecific);
 				WriteLine ("");
 			}
-			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+
 			WriteLine ("");
 			WriteLine ("{0}::{0}(void)", ClassName);
 			WriteLine ("{");
@@ -356,6 +358,41 @@ namespace System.Management.Tests
 					WriteLine ("\treturn true;");
 				}
 				WriteLine ("}");
+				WriteLine ("");
+				WriteLine ("\tBoolean {0}::createInstance()", ClassName);
+				WriteLine ("{");
+				string createInstance = TemplateFactory.GetCreateInstance (ClassName, os);
+				if (!string.IsNullOrEmpty (createInstance)) {
+					WriteLine (createInstance);
+				}
+				else {
+					WriteLine ("\treturn false;");
+				}
+				WriteLine ("}");
+				WriteLine ("");
+				WriteLine ("\tvirtual Boolean {0}::modifyInstance()", ClassName);
+				WriteLine ("{");
+				string modifyInstance = TemplateFactory.GetModifyInstance (ClassName, os);
+				if (!string.IsNullOrEmpty (modifyInstance)) {
+					WriteLine (modifyInstance);
+				}
+				else {
+					WriteLine ("\treturn false;");
+				}
+				WriteLine ("}");
+				WriteLine ("");
+				WriteLine ("\tvirtual Boolean {0}::deleteInstance()", ClassName);
+				WriteLine ("{");
+				string deleteInstance = TemplateFactory.GetDeleteInstance (ClassName, os);
+				if (!string.IsNullOrEmpty (deleteInstance)) {
+					WriteLine (deleteInstance);
+				}
+				else {
+					WriteLine ("\treturn false;");
+				}
+				WriteLine ("}");
+				WriteLine ("");
+
 			}
 		}
 

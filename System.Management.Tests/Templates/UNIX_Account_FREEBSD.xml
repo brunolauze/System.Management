@@ -199,7 +199,6 @@ void UNIX_Account::loadByPasswd(passwd *user)
 	_userPasswordEncoding = Uint32(5);
 }
 
-
     ]]>
   </Declaration>
   <Initialize>
@@ -225,4 +224,19 @@ void UNIX_Account::loadByPasswd(passwd *user)
 	return true;
     ]]>
   </Finalize>
+  <CreateInstance>
+  	<![CDATA[
+	return false;
+  	]]>
+  </CreateInstance>
+  <DeleteInstance>
+  	<![CDATA[
+	return false;
+  	]]>
+  </DeleteInstance>
+  <ModifyInstance>
+  	<![CDATA[
+	return false;
+  	]]>
+  </ModifyInstance>
 </Template>

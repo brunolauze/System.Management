@@ -29,7 +29,9 @@ namespace System.Management.Tests
 			WriteLine ("\t$(MKDIRHIER) $(DESTDIR)$(PREFIX)/lib/pegasus/lib");
 			WriteLine ("\t$(foreach i, $(wildcard $(PEGASUS_HOME)/lib/*.so), install -s -m 444 $(i) $(DESTDIR)$(PREFIX)/lib/pegasus/lib;)");
 			WriteLine ("\t$(foreach i, $(wildcard $(PEGASUS_HOME)/lib/*.so.1), install -s -m 444 $(i) $(DESTDIR)$(PREFIX)/lib/pegasus/lib;)");
-
+			WriteLine ("\t$(MKDIRHIER) $(DESTDIR)$(PREFIX)/share/pegasus");
+			WriteLine ("\tcd $(PEGASUS_ROOT)/Schemas && $(foreach i, $(wildcard *.mof), tar pzcf $(PEGASUS_HOME)/UNIXProviders.cimpkg $(i)");
+			WriteLine ("\tinstall -m 444 $(PEGASUS_ROOT)/Schemas/UNIXProviders.cimpkg $(DESTDIR)$(PREFIX)/share/pegasus/UNIXProviders.cimpkg");
 		}
 	}
 }

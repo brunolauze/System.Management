@@ -56,7 +56,7 @@
 
 #endif
 
-ss
+PROVIDER_LIB_NS
 
 class CIMHelper
 {

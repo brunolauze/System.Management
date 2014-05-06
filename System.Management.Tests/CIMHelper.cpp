@@ -89,17 +89,19 @@ CIMDateTime CIMHelper::getInstallDate(String path)
 {
 	struct tm* clock;			// create a time structure
 	struct stat attrib;			// create a file attribute structure
-	stat(path.getCString(), &attrib);		// get the attributes mnt
-	clock = gmtime(&(attrib.st_birthtime));	// Get the last modified time and put it into the time structure
-	return CIMDateTime(
-		clock->tm_year + 1900,
-		clock->tm_mon + 1,
-		clock->tm_mday,
-		clock->tm_hour,
-		clock->tm_min,
-		clock->tm_sec,
-		0,0,
-		clock->tm_gmtoff);
+	if (stat(path.getCString(), &attrib) == 0) {		// get the attributes mnt
+		clock = gmtime(&(attrib.st_birthtime));	// Get the last modified time and put it into the time structure
+		return CIMDateTime(
+			clock->tm_year + 1900,
+			clock->tm_mon + 1,
+			clock->tm_mday,
+			clock->tm_hour,
+			clock->tm_min,
+			clock->tm_sec,
+			0,0,
+			clock->tm_gmtoff);
+	}
+	return CIMHelper::NullDate;
 }
 
 CIMDateTime CIMHelper::getOSInstallDate()

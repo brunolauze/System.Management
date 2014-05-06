@@ -66,6 +66,55 @@ namespace System.Management.Tests
 			return template.Finalize;
 		}
 
+		public static string GetCreateInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return null;
+			return template.CreateInstance;
+		}
+
+		public static string GetDeleteInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return null;
+			return template.DeleteInstance;
+		}
+
+		public static string GetModifyInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return null;
+			return template.ModifyInstance;
+		}
+
+		public static bool HasCreateInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return false;
+			return !string.IsNullOrEmpty(template.CreateInstance);
+		}
+
+		public static bool HasDeleteInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return false;
+			return !string.IsNullOrEmpty(template.DeleteInstance);
+		}
+
+		public static bool HasModifyInstance(string className, string platform)
+		{
+			ClassTemplate template = GetClassTemplate (className, platform);
+			if (template == null)
+				return false;
+			return !string.IsNullOrEmpty(template.ModifyInstance);
+		}
+
+
 		public static ClassTemplate GetClassTemplate(string className, string platform)
 		{
 			string key = className + platform;
@@ -101,6 +150,12 @@ namespace System.Management.Tests
 						template.Load = el.Value;
 					else if (el.Name == "Finalize")
 						template.Finalize = el.Value;
+					else if (el.Name == "CreateInstance")
+						template.CreateInstance = el.Value;
+					else if (el.Name == "DeleteInstance")
+						template.DeleteInstance = el.Value;
+					else if (el.Name == "ModifyInstance")
+						template.ModifyInstance = el.Value;
 				}
 				return template;
 			}

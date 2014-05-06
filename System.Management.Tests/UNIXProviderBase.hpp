@@ -102,7 +102,7 @@ void UNIX_PROVIDER::invokeMethod(
 /*
 ================================================================================
 NAME              : modifyInstance
-DESCRIPTION       : Modify a UnixProcess instance.
+DESCRIPTION       : Modify an instance.
 ASSUMPTIONS       : None
 PRE-CONDITIONS    :
 POST-CONDITIONS   :
@@ -127,6 +127,17 @@ void UNIX_PROVIDER::modifyInstance(
 #endif
 
 #ifndef __createInstance_H
+/*
+================================================================================
+NAME              : createInstance
+DESCRIPTION       : Create an instance.
+ASSUMPTIONS       : None
+PRE-CONDITIONS    :
+POST-CONDITIONS   :
+NOTES             : Currently not supported.
+PARAMETERS        :
+================================================================================
+*/
 void UNIX_PROVIDER::createInstance(
     const OperationContext& context,
     const CIMObjectPath& ref,
@@ -142,8 +153,8 @@ void UNIX_PROVIDER::createInstance(
 
 #ifndef __deleteInstance_H
 // =============================================================================
-// NAME              : createInstance
-// DESCRIPTION       : Create a UnixProcess instance.
+// NAME              : deleteInstance
+// DESCRIPTION       : Delete an instance.
 // ASSUMPTIONS       : None
 // PRE-CONDITIONS    :
 // POST-CONDITIONS   :

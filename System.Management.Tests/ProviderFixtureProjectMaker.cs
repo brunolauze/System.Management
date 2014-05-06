@@ -55,7 +55,7 @@ namespace System.Management.Tests
 			WriteLine("        <Include>${ProjectDir}/../../..</Include>");
 			WriteLine("      </Includes>");
 			WriteLine("    </Includes>");
-			WriteLine("    <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\"</ExtraCompilerArguments>");
+			WriteLine("    <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\"lib\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\"lib\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\"\" -DPROVIDER_LIB_NS=\"namespace " + ClassName + "Lib {\"</ExtraCompilerArguments>");
 			WriteLine("    <ExtraLinkerArguments>-L/usr/local/lib/pegasus/lib -L/usr/local/lib -lpegcommon -lpegprovider -lpegclient -lpegslp_client -lpegquerycommon -lpegqueryexpression -lpegcql -lpegwql -lpegrepository -lutil -lgeom -ljail -lkvm -pthread -lcam -lpkg" + AddLinks() + "</ExtraLinkerArguments>");
 			WriteLine ("    <EnvironmentVariables>");
 			WriteLine ("      <EnvironmentVariables>");
@@ -80,7 +80,7 @@ namespace System.Management.Tests
 			WriteLine("    <OptimizationLevel>3</OptimizationLevel>");
 			WriteLine("    <DefineSymbols>MONODEVELOP</DefineSymbols>");
 			WriteLine("    <SourceDirectory>.</SourceDirectory>");
-			WriteLine("	   <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\"</ExtraCompilerArguments>");
+			WriteLine("	   <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\"lib\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\"lib\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\"\" -DPROVIDER_LIB_NS=\"namespace " + ClassName + "Lib {\"</ExtraCompilerArguments>");
 			WriteLine("    <ExtraLinkerArguments>-L/usr/local/lib/pegasus/lib -L/usr/local/lib -lpegcommon -lpegprovider -lpegclient -lpegslp_client -lpegquerycommon -lpegqueryexpression -lpegcql -lpegwql -lpegrepository -lutil -lgeom -ljail -lkvm -pthread -lcam -lpkg" + AddLinks() + "</ExtraLinkerArguments>");
 			WriteLine("  </PropertyGroup>");
 			string[] folders = System.IO.Directory.GetDirectories(basePath);
@@ -126,8 +126,9 @@ namespace System.Management.Tests
 				if ((file.EndsWith(".c") || file.EndsWith(".cpp")))
 					WriteLine("    <Compile Include=\"{0}/{1}\" />", new System.IO.DirectoryInfo(dir).Name, file);
 			}
-			WriteLine("  </ItemGroup>");
-			WriteLine("  <ItemGroup>");
+			WriteLine ("  </ItemGroup>");
+			WriteLine ("  <ItemGroup>");
+			WriteLine ("   <None Include=\"RunTest" + ClassName + ".sh\" />");
 			foreach (var filePath in files) {
 				string file = new System.IO.FileInfo (filePath).Name;
 				if ((!file.EndsWith(".c") && !file.EndsWith(".cpp")))
@@ -214,7 +215,7 @@ namespace System.Management.Tests
 
 			if (deps.Count > 0) {
 				foreach (var prj in deps) {
-					sb.Append ("../../../../../../" + prj.Replace ("CIM_", "").Replace ("UNIX_", "") + "/bin/Debug:");
+					sb.Append ("../../../../.." + prj.Replace ("CIM_", "").Replace ("UNIX_", "") + "/bin/Debug:");
 				}
 			}
 		}
@@ -222,7 +223,7 @@ namespace System.Management.Tests
 
 		string AddLinks ()
 		{
-			System.Text.StringBuilder links = new System.Text.StringBuilder ();
+			System.Text.StringBuilder links = new System.Text.StringBuilder (" -l" + ClassName + "Provider");
 			bool isDependency = DeriveFrom (Manifest, "CIM_Dependency");
 			bool isComponent = Class.ClassName.ToString() != "CIM_ConcreteComponent" && DeriveFrom (Manifest, "CIM_Component") && !Manifest.HaveChildren && ContainsProperties("GroupComponent", "PartComponent");
 			HashSet<string> deps = new HashSet<string>();
@@ -259,7 +260,7 @@ namespace System.Management.Tests
 			if (deps.Count > 0) {
 
 				foreach (var prj in deps) {
-					links.Append (" -l" + prj);
+					links.Append (" -l" + prj + "Provider");
 				}
 			}
 			return links.ToString ();

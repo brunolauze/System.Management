@@ -29,12 +29,31 @@ namespace System.Management.Tests
 					WriteLine ("");
 				}
 			}
+			List<string> added = new List<string> ();
+
+			WriteLine ("");
+			WriteLine ("/*");
+			WriteLine ("\t\t\t *** Properties ***");
+			WriteLine ("");
+			AddPropertiesComments (Manifest, added);
+			WriteLine ("");
+			WriteLine ("*/");
+			WriteLine ("");
+			WriteLine ("");
+			WriteLine ("/*");
+			added.Clear ();
+			WriteLine ("\t\t\t *** Methods ***");
+			WriteLine ("");
+			AddMethodComments (Manifest, added);
+			WriteLine ("");
+			WriteLine ("*/");
+			WriteLine ("");
 
 			WriteLine ("#ifndef __{0}_H", ClassName.ToUpper());
 			WriteLine ("#define __{0}_H", ClassName.ToUpper());
 			WriteLine ("");
 			WriteLine ("");
-			List<string> added = new List<string> ();
+			added.Clear ();
 			bool isDependency = DeriveFrom (Manifest, "CIM_Dependency");
 			bool isComponent = Class.ClassName.ToString() != "CIM_ConcreteComponent" && DeriveFrom (Manifest, "CIM_Component") && !Manifest.HaveChildren && ContainsProperties("GroupComponent", "PartComponent");
 			IEnumerable<string> groupNames = null;
@@ -129,6 +148,9 @@ namespace System.Management.Tests
 			WriteLine ("\tvirtual Boolean validateKey(CIMKeyBinding&) const{0};", DeclarationEnding);
 			WriteLine ("\tvirtual void setScope(CIMName){0};", DeclarationEnding);
 			WriteLine ("\tvirtual Boolean loadInstance(CIMInstance&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean createInstance(){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean modifyInstance(){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean deleteInstance(){0};", DeclarationEnding);
 			WriteLine ("");
 
 			DefinePropertiesGetter (Manifest, added, Manifest.HaveChildren);
@@ -201,7 +223,7 @@ namespace System.Management.Tests
 				if (added.Contains (methodName))
 					continue;
 				added.Add (methodName);
-				WriteLine ("\tvirtual {0} {1}({2});\n", GetCodeType(method), methodName, GetMethodParameters(method));
+				WriteLine ("\tvirtual {0} {1}({2}){3};\n", GetCodeType(method), methodName, GetMethodParameters(method), DeclarationEnding);
 			}
 		}
 
@@ -293,6 +315,35 @@ namespace System.Management.Tests
 			}
 		}
 
+		void AddPropertiesComments (ClassManifest target, List<string> added)
+		{
+			if (target.SuperClass != null)
+				AddPropertiesComments (target.SuperClass, added);
+
+			WriteLine ("\t\t\t{0}:", CodeWriterBase.GetClassName (target));
+
+			foreach (var p in target.Class.Properties) {
+				if (added.Contains(p.Name.ToString())) continue;
+				added.Add (p.Name.ToString());
+				WriteLine ("\t\t\t\t{0} {1}", p.Name, p.Type.ToString ());
+			}
+			WriteLine ("");
+		}
+
+		void AddMethodComments (ClassManifest target, List<string> added)
+		{
+			if (target.SuperClass != null)
+				AddMethodComments (target.SuperClass, added);
+
+			WriteLine ("\t\t\t{0}:", CodeWriterBase.GetClassName (target));
+
+			foreach (var p in target.Class.Methods) {
+				if (added.Contains(p.Name.ToString())) continue;
+				added.Add (p.Name.ToString());
+				WriteLine ("\t\t\t\t{0} {1}", p.Name, p.Type.ToString ());
+			}
+			WriteLine ("");
+		}
 	}
 }
 

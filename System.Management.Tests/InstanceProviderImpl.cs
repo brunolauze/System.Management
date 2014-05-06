@@ -149,7 +149,9 @@ namespace System.Management.Tests
 			if (DeriveFrom (Manifest, "CIM_ManagedSystemElement")) {
 				WriteLine ("#define CLASS_LOADABLE_BY_NAME 1");
 			}
-
+			AddCreateInstance ();
+			AddDeleteInstance ();
+			AddModifyInstance ();
 			WriteLine("");
 			WriteLine("");
 			WriteLine("#include \"UNIXProviderBase.hpp\"");
@@ -268,6 +270,241 @@ namespace System.Management.Tests
 			else if (type == System.Management.Internal.CimType.CIMNULL)
 				return "STRING";
 			return "NUMERIC";
+		}
+
+		void AddDeleteInstance()
+		{
+			if (AddDeleteInstance ("FREEBSD")) return;
+			if (AddDeleteInstance ("LINUX")) return;
+			if (AddDeleteInstance ("ZOS")) return;
+			if (AddDeleteInstance ("WIN32")) return;
+			if (AddDeleteInstance ("SOLARIS")) return;
+			if (AddDeleteInstance ("HPUX")) return;
+			if (AddDeleteInstance ("VMS")) return;
+			if (AddDeleteInstance ("TRU64")) return;
+			if (AddDeleteInstance ("DARWIN")) return;
+			if (AddDeleteInstance ("AIX")) return;
+			if (AddDeleteInstance ("STUB")) return;
+		}
+
+		void AddCreateInstance()
+		{
+			if (AddCreateInstance ("FREEBSD")) return;
+			if (AddCreateInstance ("LINUX")) return;
+			if (AddCreateInstance ("ZOS")) return;
+			if (AddCreateInstance ("WIN32")) return;
+			if (AddCreateInstance ("SOLARIS")) return;
+			if (AddCreateInstance ("HPUX")) return;
+			if (AddCreateInstance ("VMS")) return;
+			if (AddCreateInstance ("TRU64")) return;
+			if (AddCreateInstance ("DARWIN")) return;
+			if (AddCreateInstance ("AIX")) return;
+			if (AddCreateInstance ("STUB")) return;
+		}
+
+		bool AddCreateInstance(string os)
+		{
+			if (!TemplateFactory.HasCreateInstance(ClassName, os)) return false;
+			WriteLine ("");
+			WriteLine ("#define __createInstance_H");
+			WriteLine ("/*");
+			WriteLine ("================================================================================");
+			WriteLine ("NAME              : createInstance");
+			WriteLine ("DESCRIPTION       : Create {0} instance;", ClassName);
+			WriteLine ("ASSUMPTIONS       : None");
+			WriteLine ("PRE-CONDITIONS    : ");
+			WriteLine ("POST-CONDITIONS   : ");
+			WriteLine ("NOTES             : ");
+			WriteLine ("================================================================================");
+			WriteLine ("*/");
+			WriteLine ("");
+			WriteLine ("void {0}Provider::createInstance(", ClassName);
+			WriteLine ("\tconst OperationContext& context,");
+			WriteLine ("\tconst CIMObjectPath& ref,");
+			WriteLine ("\tconst CIMInstance& instanceObject,");
+			WriteLine ("\tObjectPathResponseHandler& handler)");
+			WriteLine ("{");
+			WriteLine ("\tif (!ref.getClassName().equal(\"" + ClassName + "\") && !ref.getClassName().equal(\"" + Class.ClassName.ToString() + "\")) {");
+			WriteLine ("\t\tString classMessage;");
+			WriteLine ("\t\tclassMessage.append(\"{0} Provider\");", ClassName);
+			WriteLine ("\t\tclassMessage.append (\" does not support class \");");
+			WriteLine ("\t\tclassMessage.append (ref.getClassName().getString());");
+			WriteLine ("\t\tthrow CIMNotSupportedException(classMessage);");
+			WriteLine ("\t}");
+			WriteLine ("");
+			WriteLine ("");
+			WriteLine ("\thandler.processing();");
+
+			WriteLine ("\t// Make cimom handle deleteInstance request from object path reference.");
+			WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
+			WriteLine ("\t\tString(\"\"),");
+			WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
+			WriteLine ("\t\tref.getClassName(),");
+			WriteLine ("\t\tref.getKeyBindings());");
+			WriteLine ("\t");
+			WriteLine ("\tif (_p.find(localReference.getKeyBindings())) {");
+			WriteLine ("\t\tthrow CIMObjectAlreadyExistsException(");
+			WriteLine ("\t\t\t\tlocalReference.toString());");
+			WriteLine ("\t}");
+			WriteLine ("\telse {");
+			WriteLine ("\t\tif (_p.loadInstance(instanceObject) {");
+			WriteLine ("\t\t\tif (_p.createInstance()) {");
+			WriteLine ("\t\t\t\t/* Deliver Instance */");
+			WriteLine ("\t\t\t\tCIMInstance creationResult = constructInstance(");
+			WriteLine ("\t\t\t\t\t\t\tlocalReference.getClassName(), ");
+			WriteLine ("\t\t\t\t\t\t\tCIMNamespaceName(\"root/cimv2\"), ");
+			WriteLine ("\t\t\t\t\t\t\t_p);");
+			WriteLine ("\t\t\t\thandler.deliver(creationResult);");
+			WriteLine ("\t\t\t\t/* Send Create Indication */");
+			WriteLine ("\t\t\t}");
+			WriteLine ("\t\t\telse {");
+			WriteLine ("\t\t\t\t/* Raise Creating Exception */");
+			WriteLine ("\t\t\t}");
+			WriteLine ("\t\t}");
+			WriteLine ("\t\telse {");
+			WriteLine ("\t\t\t/* Raise Loading Exception */");
+			WriteLine ("\t\t}");
+			WriteLine ("\t}");
+			WriteLine ("\thandler.complete();");
+			WriteLine ("}");
+			return true;
+		}
+
+
+		bool AddDeleteInstance(string os)
+		{
+			if (!TemplateFactory.HasDeleteInstance(ClassName, os)) return false;
+			WriteLine ("");
+			WriteLine ("#define __deleteInstance_H");
+			WriteLine ("/*");
+			WriteLine ("================================================================================");
+			WriteLine ("NAME              : deleteInstance");
+			WriteLine ("DESCRIPTION       : Delete {0} instance;", ClassName);
+			WriteLine ("ASSUMPTIONS       : None");
+			WriteLine ("PRE-CONDITIONS    : ");
+			WriteLine ("POST-CONDITIONS   : ");
+			WriteLine ("NOTES             : ");
+			WriteLine ("================================================================================");
+			WriteLine ("*/");
+			WriteLine ("");
+			WriteLine ("void {0}Provider::deleteInstance(", ClassName);
+			WriteLine ("\tconst OperationContext& context,");
+			WriteLine ("\tconst CIMObjectPath& ref,");
+			WriteLine ("\tResponseHandler& handler)");
+			WriteLine ("{");
+			WriteLine ("\tif (!ref.getClassName().equal(\"" + ClassName + "\") && !ref.getClassName().equal(\"" + Class.ClassName.ToString() + "\")) {");
+			WriteLine ("\t\tString classMessage;");
+			WriteLine ("\t\tclassMessage.append(\"{0} Provider\");", ClassName);
+			WriteLine ("\t\tclassMessage.append (\" does not support class \");");
+			WriteLine ("\t\tclassMessage.append (ref.getClassName().getString());");
+			WriteLine ("\t\tthrow CIMNotSupportedException(classMessage);");
+			WriteLine ("\t}");
+			WriteLine ("");
+			WriteLine ("");
+			WriteLine ("\thandler.processing();");
+
+			WriteLine ("\t// Make cimom handle deleteInstance request from object path reference.");
+			WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
+			WriteLine ("\t\tString(\"\"),");
+			WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
+			WriteLine ("\t\tref.getClassName(),");
+			WriteLine ("\t\tref.getKeyBindings());");
+			WriteLine ("\t");
+
+			WriteLine ("\tif (_p.find(localReference.getKeyBindings()) {");
+			WriteLine ("\t\tif (!_p.deleteInstance()) {");
+			WriteLine ("\t\t\t/* Send Delete Indication */");
+			WriteLine ("\t\t}");
+			WriteLine ("\t\telse {");
+			WriteLine ("\t\t\t/* Raise Delete Exception */");
+			WriteLine ("\t\t}");
+			WriteLine ("\t}");
+			WriteLine ("\telse {");
+			WriteLine ("\t\tthrow CIMObjectNotFoundException(");
+			WriteLine ("\t\t\t\tlocalReference.toString());");
+			WriteLine ("\t}");
+
+			WriteLine ("\thandler.complete();");
+			WriteLine ("}");
+			return true;
+		}
+
+		void AddModifyInstance()
+		{
+			if (AddModifyInstance ("FREEBSD")) return;
+			if (AddModifyInstance ("LINUX")) return;
+			if (AddModifyInstance ("ZOS")) return;
+			if (AddModifyInstance ("WIN32")) return;
+			if (AddModifyInstance ("SOLARIS")) return;
+			if (AddModifyInstance ("HPUX")) return;
+			if (AddModifyInstance ("VMS")) return;
+			if (AddModifyInstance ("TRU64")) return;
+			if (AddModifyInstance ("DARWIN")) return;
+			if (AddModifyInstance ("AIX")) return;
+			if (AddModifyInstance ("STUB")) return;
+		}
+
+		bool AddModifyInstance(string os)
+		{
+			if (!TemplateFactory.HasModifyInstance(ClassName, os)) return false;
+			WriteLine ("");
+			WriteLine ("#define __modifyInstance_H");
+			WriteLine ("/*");
+			WriteLine ("================================================================================");
+			WriteLine ("NAME              : modifyInstance");
+			WriteLine ("DESCRIPTION       : Modify {0} instance;", ClassName);
+			WriteLine ("ASSUMPTIONS       : None");
+			WriteLine ("PRE-CONDITIONS    : ");
+			WriteLine ("POST-CONDITIONS   : ");
+			WriteLine ("NOTES             : ");
+			WriteLine ("================================================================================");
+			WriteLine ("*/");
+			WriteLine ("");
+			WriteLine ("void {0}Provider::modifyInstance(", ClassName);
+			WriteLine ("\tconst OperationContext& context,");
+			WriteLine ("\tconst CIMObjectPath& ref,");
+			WriteLine ("\tconst CIMInstance& instanceObject,");
+			WriteLine ("\tconst Boolean includeQualifiers,");
+			WriteLine ("\tconst CIMPropertyList& propertyList,");
+			WriteLine ("\tResponseHandler& handler)");
+			WriteLine ("{");
+			WriteLine ("\tif (!ref.getClassName().equal(\"" + ClassName + "\") && !ref.getClassName().equal(\"" + Class.ClassName.ToString() + "\")) {");
+			WriteLine ("\t\tString classMessage;");
+			WriteLine ("\t\tclassMessage.append(\"{0} Provider\");", ClassName);
+			WriteLine ("\t\tclassMessage.append (\" does not support class \");");
+			WriteLine ("\t\tclassMessage.append (ref.getClassName().getString());");
+			WriteLine ("\t\tthrow CIMNotSupportedException(classMessage);");
+			WriteLine ("\t}");
+			WriteLine ("");
+			WriteLine ("");
+			WriteLine ("\thandler.processing();");
+
+			WriteLine ("\t// Make cimom handle deleteInstance request from object path reference.");
+			WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
+			WriteLine ("\t\tString(\"\"),");
+			WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
+			WriteLine ("\t\tref.getClassName(),");
+			WriteLine ("\t\tref.getKeyBindings());");
+			WriteLine ("\t");
+
+			WriteLine ("\tif (_p.find(localReference.getKeyBindings()) {");
+			WriteLine ("\t\tif (_p.loadInstance(instanceObject) {");
+			WriteLine ("\t\t\tif (!_p.modifyInstance()) {");
+			WriteLine ("\t\t\t\t/* Send Modify Indication */");
+			WriteLine ("\t\t\t}");
+			WriteLine ("\t\t\telse {");
+			WriteLine ("\t\t\t\t/* Raise Modify Exception */");
+			WriteLine ("\t\t\t}");
+			WriteLine ("\t\t}");
+			WriteLine ("\t}");
+			WriteLine ("\telse {");
+			WriteLine ("\t\tthrow CIMObjectNotFoundException(");
+			WriteLine ("\t\t\t\tlocalReference.toString());");
+			WriteLine ("\t}");
+
+			WriteLine ("\thandler.complete();");
+			WriteLine ("}");
+			return true;
 		}
 	}
 }
