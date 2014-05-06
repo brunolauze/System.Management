@@ -14,7 +14,19 @@ namespace System.Management.Tests
 		{
 			WriteLicense ();
 			WriteLine ("");
-			WriteLine ("#include \"CIMFixtureBase.h\"");
+			WriteLine ("#ifndef __CIMFIXTUREBASE_H");
+			WriteLine ("#define __CIMFIXTUREBASE_H");
+			WriteLine ("");
+			WriteLine ("class CIMFixtureBase");
+			WriteLine ("{");
+			WriteLine ("public:");
+			WriteLine ("\tvirtual void Run()=0;");
+			WriteLine ("");
+			WriteLine ("};");
+			WriteLine ("");
+			WriteLine ("#endif");
+			WriteLine ("");
+			//WriteLine ("#include \"CIMFixtureBase.h\"");
 			WriteLine ("");
 			WriteLine ("class {0}Fixture :", ClassName);
 			WriteLine ("\tpublic CIMFixtureBase");

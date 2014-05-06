@@ -74,6 +74,8 @@
     <Compile Include="SingleProviderProjectMaker.cs" />
     <Compile Include="SolutionFileCreator.cs" />
     <Compile Include="SolutionItem.cs" />
+    <Compile Include="ProviderFixtureProjectMaker.cs" />
+    <Compile Include="SingleFixtureCreator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

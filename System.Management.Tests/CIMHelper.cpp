@@ -37,6 +37,8 @@
 #include <unistd.h>
 #include <sstream>
 
+PROVIDER_LIB_NS
+
 String CIMHelper::getHostName()
 {
      char    hostName[PEGASUS_MAXHOSTNAMELEN + 1];
@@ -438,3 +440,4 @@ std::vector<std::string> CIMHelper::split(const std::string &s, char delim) {
 #else
 
 #endif
+}

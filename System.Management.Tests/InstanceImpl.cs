@@ -34,7 +34,8 @@ namespace System.Management.Tests
 				WriteLine (declSpecific);
 				WriteLine ("");
 			}
-
+			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+			WriteLine ("");
 			WriteLine ("{0}::{0}(void)", ClassName);
 			WriteLine ("{");
 			WriteLine ("}");

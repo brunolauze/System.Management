@@ -19,7 +19,7 @@ namespace System.Management.Tests
 			foreach (var m in GeneratorFactory.Classes.OrderBy(x => x.Class.ClassName.ToString())) {
 				if (!m.HaveChildren) {
 					string className = FixExceptions(m.Class.ClassName.ToString ()).Replace ("CIM_", "UNIX_");
-					WriteLine ("{0}#include \"{1}Fixture.h\"", GeneratorFactory.IsDone(FixExceptions(m.Class.ClassName.ToString())) ? "" : "//", className);
+					WriteLine ("#include \"{0}Fixture.h\"", className);
 				}
 			}
 			WriteLine ("");
@@ -50,8 +50,8 @@ namespace System.Management.Tests
 				{
 					string className = FixExceptions(m.Class.ClassName.ToString ()).Replace ("CIM_", "UNIX_");
 					string paramName = className.Replace ("UNIX_", "");
-					paramName = paramName.Substring (0, 1).ToLower () + paramName.Substring (1);
-					WriteLine ("\t" + (GeneratorFactory.IsDone(FixExceptions(m.Class.ClassName.ToString())) ? "" : "//") + "if (IsTarget(s, \"" + className + "\")) { " + className + "Fixture " + paramName + "; " + paramName + ".Run(); }");
+					paramName = "__" + paramName.Substring (0, 1).ToLower () + paramName.Substring (1);
+					WriteLine ("\tif (IsTarget(s, \"" + className + "\")) { " + className + "Fixture " + paramName + "; " + paramName + ".Run(); }");
 				}
 			}
 			WriteLine ("");

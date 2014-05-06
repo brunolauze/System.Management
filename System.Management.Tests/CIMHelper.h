@@ -55,6 +55,9 @@
 #else
 
 #endif
+
+ss
+
 class CIMHelper
 {
 public:
@@ -119,4 +122,5 @@ private:
 	static std::string gethex( unsigned int c );
 };
 
+} /* End Namespace */
 #endif

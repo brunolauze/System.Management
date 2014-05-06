@@ -36,6 +36,8 @@ namespace System.Management.Tests
 
 
 		private static List<SolutionItem> projects = new List<SolutionItem> ();
+		private static List<SolutionItem> projectTests = new List<SolutionItem> ();
+
 
 		public static void Generate(ClassManifest manifest)
 		{
@@ -191,6 +193,22 @@ namespace System.Management.Tests
 			implFixture.Write ();
 			headerFixture.Save(System.IO.Path.Combine(testPath, headerFixture.ClassName + "Fixture.h"));
 			implFixture.Save(System.IO.Path.Combine(testPath, implFixture.ClassName + "Fixture.cpp"));
+
+			string folderName = CodeWriterBase.GetClassName (manifest).Replace ("CIM_", "").Replace ("UNIX_", "");
+			System.IO.Directory.CreateDirectory(System.IO.Path.Combine (BasePath, folderName, "tests"));
+			string providerTestPath = System.IO.Path.Combine (BasePath, folderName, "tests", folderName + ".Tests");
+			System.IO.Directory.CreateDirectory (providerTestPath);
+			headerFixture.Save(System.IO.Path.Combine(providerTestPath, headerFixture.ClassName + "Fixture.h"));
+			implFixture.Save(System.IO.Path.Combine(providerTestPath, implFixture.ClassName + "Fixture.cpp"));
+
+			SingleFixtureCreator main = new SingleFixtureCreator (manifest);
+			main.Write ();
+			main.Save (System.IO.Path.Combine (providerTestPath, "main.cpp"));
+
+			ProviderFixtureProjectMaker fixtureProject = new ProviderFixtureProjectMaker (manifest, providerTestPath);
+			fixtureProject.Write ();
+			fixtureProject.Save(System.IO.Path.Combine(providerTestPath, CodeWriterBase.GetClassName(manifest) + ".Tests.cproj"));
+			projectTests.Add (fixtureProject.Project);
 		}
 
 		public static void Generate(IEnumerable<ClassManifest> manifests)
@@ -217,9 +235,13 @@ namespace System.Management.Tests
 			baseFiles.AddRange(System.IO.Directory.GetFiles (Environment.CurrentDirectory, "*.cpp"));
 
 			foreach (var baseFile in baseFiles) {
+				if (baseFile.Contains("CIMFixtureBase")) continue;
 				System.IO.File.Copy (baseFile, 
 					System.IO.Path.Combine (BasePath, new System.IO.FileInfo (baseFile).Name));
 			}
+
+			System.IO.File.Copy (System.IO.Path.Combine (Environment.CurrentDirectory, "CIMFixtureBase.h"), System.IO.Path.Combine (testPath, "CIMFixtureBase.h"));
+
 
 			InstanceBaseHeader baseHeader = new InstanceBaseHeader ();
 
@@ -263,12 +285,14 @@ namespace System.Management.Tests
 			provManagedSystem.Write ();
 			provManagedSystem.Save (System.IO.Path.Combine (SchemaPath, "UNIX_ManagedSystemSchema20R.mof"));
 
+			/*
 			ProviderProjectMaker providerProject = new ProviderProjectMaker (BasePath, false, projects);
 			providerProject.Write ();
 			ProviderProjectMaker providerTestProject = new ProviderProjectMaker (testPath, true, projects);
 			providerTestProject.Write ();
+			*/
 
-			SolutionFileCreator slnCreator = new SolutionFileCreator (projects);
+			SolutionFileCreator slnCreator = new SolutionFileCreator (projects, projectTests);
 			slnCreator.Write ();
 			slnCreator.Save (System.IO.Path.Combine (RootPath, "openpegasus-providers.sln"));
 		

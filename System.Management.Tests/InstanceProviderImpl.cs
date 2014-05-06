@@ -19,6 +19,8 @@ namespace System.Management.Tests
 			WriteLine("");
 			WriteLine("#include \"{0}Provider.h\"", ClassName);
 			WriteLine("");
+			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+			WriteLine ("");
 			WriteLine("{0}Provider::{0}Provider()", ClassName);
 			WriteLine("{");
 			WriteLine("}");

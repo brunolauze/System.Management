@@ -24,7 +24,6 @@ namespace System.Management.Tests
 			WriteLine("  <PropertyGroup>");
 			WriteLine("    <Configuration Condition=\" '$(Configuration)' == '' \">Debug</Configuration>");
 			WriteLine("    <Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>");
-
 			WriteLine("    <ProjectGuid>{0}</ProjectGuid>", isTest ? "{FB6D38B1-B280-4DC5-BFA8-4709837175EF}" : "{4DC6B981-CE60-4CD1-9DF5-7AEE2873EBDD}");
 			WriteLine("    <Compiler>");
 			WriteLine("      <Compiler ctype=\"ClangppCompiler\" />");
@@ -33,20 +32,20 @@ namespace System.Management.Tests
 			WriteLine("    <Target>Bin</Target>");
 			if (isTest)
 			{
-				/*
 				WriteLine ("    <Packages>");
 				WriteLine("      <Packages>");
-				WriteLine("        <Package file=\"../../UNIXProviders/UNIXProviders.md.pc\" name=\"UNIXProviders\" IsProject=\"True\" />");
+				foreach (var prj in projects) {
+					WriteLine ("        <Package file=\"../../{0}/{1}.md.pc\" name=\"{1}\" IsProject=\"True\" />", prj.Name.Replace("CIM_", "").Replace("UNIX_", ""), prj.Name);
+				}
 				WriteLine("      </Packages>");
 				WriteLine("    </Packages>");
-				*/
 			}
 			WriteLine("  </PropertyGroup>");
 			WriteLine("  <PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">");
 			WriteLine("    <DebugSymbols>true</DebugSymbols>");
 			WriteLine("    <OutputPath>bin\\Debug</OutputPath>");
-			WriteLine("    <OutputName>{0}</OutputName>", isTest ? "UNIXProviders.Tests" : "UNIXProviders");
-			WriteLine("    <CompileTarget>SharedLibrary</CompileTarget>");
+			WriteLine("    <OutputName>{0}</OutputName>", isTest ? "TestUNIXProviders" : "UNIXProviders");
+			if (!isTest) WriteLine("    <CompileTarget>SharedLibrary</CompileTarget>");
 			WriteLine("    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>");
 			WriteLine("    <SourceDirectory>.</SourceDirectory>");
 			WriteLine("    <Includes>");
@@ -60,26 +59,27 @@ namespace System.Management.Tests
 			}
 			WriteLine("      </Includes>");
 			WriteLine("    </Includes>");
+			/*
 			System.Text.StringBuilder projectLink = new System.Text.StringBuilder ();
 			if (isTest) {
 				foreach (var prj in projects) {
 					projectLink.Append (" -L../../" + prj.Name.Replace ("CIM_", "").Replace ("UNIX_", "") + "/bin/Debug -l" + prj.Name + "Provider");
 				}
 			}
-			WriteLine("    <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\"</ExtraCompilerArguments>");
-			WriteLine("    <ExtraLinkerArguments>-L/usr/local/lib/pegasus/lib -L/usr/local/lib -lpegcommon -lpegprovider -lpegclient -lpegslp_client -lpegquerycommon -lpegqueryexpression -lpegcql -lpegwql -lpegrepository -lutil -lgeom -ljail -lkvm -pthread -lcam -lpkg" + (isTest ? projectLink.ToString() : "") + "</ExtraLinkerArguments>");
+			*/
+			WriteLine("    <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\" -DPROVIDER_LIB_NS=\\\"UNIXProvidersLib\\\"</ExtraCompilerArguments>");
+			WriteLine("    <ExtraLinkerArguments>-L/usr/local/lib/pegasus/lib -L/usr/local/lib -lpegcommon -lpegprovider -lpegclient -lpegslp_client -lpegquerycommon -lpegqueryexpression -lpegcql -lpegwql -lpegrepository -lutil -lgeom -ljail -lkvm -pthread -lcam -lpkg</ExtraLinkerArguments>");
+			System.Text.StringBuilder projectPaths = new System.Text.StringBuilder ();
+			foreach (var prj in projects) {
+				projectPaths.Append ("../../../../" + prj.Name.Replace ("CIM_", "").Replace ("UNIX_", "") + "/bin/Debug:");
+			}
 			if (isTest)
 			{
 				WriteLine ("    <EnvironmentVariables>");
 				WriteLine ("      <EnvironmentVariables>");
-				System.Text.StringBuilder projectPaths = new System.Text.StringBuilder ();
-				foreach (var prj in projects) {
-					projectPaths.Append ("../../../../" + prj.Name.Replace ("CIM_", "").Replace ("UNIX_", "") + "/bin/Debug:");
-				}
-
-				WriteLine("        <Variable name=\"LD_LIBRARY_PATH\" value=\"" + projectPaths + ":/usr/local/lib/pegasus/lib:/usr/local/lib:/usr/lib:/lib\" />");
-							WriteLine("      </EnvironmentVariables>");
-								WriteLine("    </EnvironmentVariables>");
+				WriteLine ("        <Variable name=\"LD_LIBRARY_PATH\" value=\"" + projectPaths + ":/usr/local/lib/pegasus/lib:/usr/local/lib:/usr/lib:/lib\" />");
+				WriteLine ("      </EnvironmentVariables>");
+				WriteLine ("    </EnvironmentVariables>");
 				WriteLine ("    <Commandlineparameters></Commandlineparameters>");
 				WriteLine ("    <ConsolePause>false</ConsolePause>");
 				WriteLine ("    <LibPaths>");
@@ -91,13 +91,30 @@ namespace System.Management.Tests
 			WriteLine("  </PropertyGroup>");
 			WriteLine("  <PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' \">");
 			WriteLine("    <OutputPath>bin\\Release</OutputPath>");
-			WriteLine("    <OutputName>UNIXProviders</OutputName>");
-			WriteLine("    <CompileTarget>SharedLibrary</CompileTarget>");
+			WriteLine("    <OutputName>{0}</OutputName>", isTest ? "TestUNIXProviders" : "UNIXProviders");
+			if (!isTest) WriteLine("    <CompileTarget>SharedLibrary</CompileTarget>");
 			WriteLine("    <OptimizationLevel>3</OptimizationLevel>");
 			WriteLine("    <DefineSymbols>MONODEVELOP</DefineSymbols>");
 			WriteLine("    <SourceDirectory>.</SourceDirectory>");
-			WriteLine("	   <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\"</ExtraCompilerArguments>");
+			WriteLine("	   <ExtraCompilerArguments>-W -Wall -Wno-unused-parameter  -Wno-unused-value -D_GNU_SOURCE -DTHREAD_SAFE -D_REENTRANT -Werror=unused-variable	-DPEGASUS_COMMON_INTERNAL  -DPEGASUS_PLATFORM_FREEBSD_GENERIC_GNU -DPEGASUS_OS_FREEBSD -DPEGASUS_PLATFORM_FREEBSD_X86_64_CLANG -DPEGASUS_USE_SYSLOGS -DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\"DPEGASUS_ARCH_LIB=\\\"lib\\\" -DPEGASUS_ENABLE_USERGROUP_AUTHORIZATION -DPEGASUS_ENABLE_CQL -DPEGASUS_DEFAULT_ENABLE_OOP -DPEGASUS_ENABLE_EXECQUERY -DPEGASUS_HAS_SSL -DPEGASUS_SSL_RANDOMFILE -DPEGASUS_ENABLE_SSL_CRL_VERIFICATION -DPEGASUS_ENABLE_AUDIT_LOGGER -DPEGASUS_ENABLE_IPV6 -DPEGASUS_ENABLE_INDICATION_COUNT -DPEGASUS_ENABLE_SLP -DPEGASUS_USE_EXTERNAL_SLP_TYPE=1 -DPEGASUS_ENABLE_INTEROP_PROVIDER -DPEGASUS_USE_EXPERIMENTAL_INTERFACES -DPEGASUS_ENABLE_CMPI_PROVIDER_MANAGER -DPEGASUS_DEST_LIB_DIR=\\\"lib\\\" -DPEGASUS_ENABLE_PROTOCOL_WSMAN -DPEGASUS_PAM_AUTHENTICATION -DPEGASUS_NO_PASSWORDFILE -DPEGASUS_ENABLE_PROTOCOL_BINARY -DPEGASUS_EXTRA_PROVIDER_LIB_DIR=\\\"\\\" -DPROVIDER_LIB_NS=\\\"namespace UNIXProvidersLib {\\\"</ExtraCompilerArguments>");
 			WriteLine("    <ExtraLinkerArguments>-L/usr/local/lib/pegasus/lib -L/usr/local/lib -lpegcommon -lpegprovider -lpegclient -lpegslp_client -lpegquerycommon -lpegqueryexpression -lpegcql -lpegwql -lpegrepository -lutil -lgeom -ljail -lkvm -pthread -lcam -lpkg</ExtraLinkerArguments>");
+			if (isTest)
+			{
+				WriteLine ("    <EnvironmentVariables>");
+				WriteLine ("      <EnvironmentVariables>");
+
+
+				WriteLine("        <Variable name=\"LD_LIBRARY_PATH\" value=\"" + projectPaths + ":/usr/local/lib/pegasus/lib:/usr/local/lib:/usr/lib:/lib\" />");
+				WriteLine("      </EnvironmentVariables>");
+				WriteLine("    </EnvironmentVariables>");
+				WriteLine ("    <Commandlineparameters></Commandlineparameters>");
+				WriteLine ("    <ConsolePause>false</ConsolePause>");
+				WriteLine ("    <LibPaths>");
+				WriteLine ("      <LibPaths>");
+				WriteLine ("        <LibPath>${ProjectDir}/../../bin/Debug</LibPath>");
+				WriteLine ("    </LibPaths>");
+				WriteLine ("    </LibPaths>");
+			}
 			WriteLine("  </PropertyGroup>");
 			string[] folders = System.IO.Directory.GetDirectories(basePath);
 			WriteLine("  <ItemGroup>");

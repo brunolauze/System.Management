@@ -48,7 +48,7 @@ namespace System.Management.Tests
 			WriteLine ("\t\t{");
 			WriteLine ("");
 			WriteLine ("\t\t\tCIMProperty propertyItem = instance.getProperty(i);");
-			WriteLine ("\t\t\tif (propertyItem.getType() == CIMType::REFERENCE) {");
+			WriteLine ("\t\t\tif (propertyItem.getType() == CIMTYPE_REFERENCE) {");
 			WriteLine ("\t\t\t\tCIMValue subValue = propertyItem.getValue();");
 			WriteLine ("\t\t\t\tCIMInstance subInstance;");
 			WriteLine ("\t\t\t\tsubValue.get(subInstance);");

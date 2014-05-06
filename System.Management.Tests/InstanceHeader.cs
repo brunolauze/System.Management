@@ -38,7 +38,7 @@ namespace System.Management.Tests
 			bool isDependency = DeriveFrom (Manifest, "CIM_Dependency");
 			bool isComponent = Class.ClassName.ToString() != "CIM_ConcreteComponent" && DeriveFrom (Manifest, "CIM_Component") && !Manifest.HaveChildren && ContainsProperties("GroupComponent", "PartComponent");
 			IEnumerable<string> groupNames = null;
-			IEnumerable<string> partNames = null;
+			IEnumerable<string> partNames = null;		
 
 			if (this.Manifest.SuperClass == null) {
 				WriteLine ("#include \"CIM_ClassBase.h\"");
@@ -128,8 +128,7 @@ namespace System.Management.Tests
 			WriteLine ("\tvirtual Boolean find(const Array<CIMKeyBinding>&){0};", DeclarationEnding);
 			WriteLine ("\tvirtual Boolean validateKey(CIMKeyBinding&) const{0};", DeclarationEnding);
 			WriteLine ("\tvirtual void setScope(CIMName){0};", DeclarationEnding);
-			WriteLine ("");
-			WriteLine ("\tvirtual Boolean loadInstance(CIMInstance&);");
+			WriteLine ("\tvirtual Boolean loadInstance(CIMInstance&){0};", DeclarationEnding);
 			WriteLine ("");
 
 			DefinePropertiesGetter (Manifest, added, Manifest.HaveChildren);
