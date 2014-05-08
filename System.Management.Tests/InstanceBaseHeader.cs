@@ -30,6 +30,13 @@ namespace System.Management.Tests
 			WriteLine ("\tvirtual Boolean finalize()=0;");
 			WriteLine ("\tvirtual Boolean find(const Array<CIMKeyBinding>&)=0;");
 			WriteLine ("\tvirtual Boolean validateKey(CIMKeyBinding&) const=0;");
+			WriteLine ("\tvirtual void setScope(CIMName)=0;");
+			WriteLine ("\tvirtual void setCIMOMHandle(CIMOMHandle&)=0;");
+			WriteLine ("\tvirtual Boolean loadInstance(const CIMInstance&)=0;");
+			WriteLine ("\tvirtual Boolean createInstance(const OperationContext&)=0;");
+			WriteLine ("\tvirtual Boolean modifyInstance(const OperationContext&)=0;");
+			WriteLine ("\tvirtual Boolean deleteInstance(const OperationContext&)=0;");
+			WriteLine ("\tvirtual Boolean validateInstance()=0;");
 			WriteLine ("");
 			WriteLine ("private:");
 			WriteLine ("");

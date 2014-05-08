@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace System.Management.Tests
 {
 	public class ClassTemplate
 	{
+
 		public string Dependencies
 		{
 			get;set;
@@ -34,6 +36,11 @@ namespace System.Management.Tests
 			get;set;
 		}
 
+		public string LoadByName {
+			get;
+			set;
+		}
+
 		public string Finalize
 		{
 			get;set;
@@ -50,6 +57,16 @@ namespace System.Management.Tests
 		}
 
 		public string ModifyInstance
+		{
+			get;set;
+		}
+
+		public string ValidateInstance
+		{
+			get;set;
+		}
+
+		public IEnumerable<TestTemplate> Tests
 		{
 			get;set;
 		}

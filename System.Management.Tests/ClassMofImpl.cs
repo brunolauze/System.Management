@@ -19,7 +19,7 @@ namespace System.Management.Tests
 				.Replace ("CIM_ElectricalSwitch", "CIM_ElectricalSwtich")
 				.Replace ("CIM_OpticalDriveDiagnosticTest", "CIM_OpticalDiskDiagnosticTest")
 				.Replace ("CIM_ResourcePoolExtentDependency", "CIM_ResourcePoolDriveDependency");
-			string dmtfPath = "/usr/ports/net-mgmt/openpegasus/work/openpegasus-2.14.0/Schemas/CIM240/DMTF";
+			string dmtfPath = System.IO.Path.Combine(new System.IO.DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, "CIM240/DMTF");
 			string[] files = System.IO.Directory.GetFiles (dmtfPath, targetName + ".mof", System.IO.SearchOption.AllDirectories);
 			if (files.Length == 0)
 				throw new NotImplementedException ("Missing class: " + targetName);

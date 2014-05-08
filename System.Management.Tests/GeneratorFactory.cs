@@ -125,6 +125,9 @@ namespace System.Management.Tests
 			}
 
 			if (!manifest.HaveChildren) {
+				ProviderMain mainFile = new ProviderMain (manifest);
+				mainFile.Write ();
+				mainFile.Save(System.IO.Path.Combine (strBasePath, CodeWriterBase.GetClassName(manifest) + "Main.cpp"));
 				ProviderMakefile makefile = new ProviderMakefile (manifest);
 				makefile.Write ();
 				makefile.Save(System.IO.Path.Combine (strBasePath, "Makefile"));
@@ -146,7 +149,7 @@ namespace System.Management.Tests
 			InstancePlatformPrivateImpl privateHeaderImpl = new InstancePlatformPrivateImpl (manifest, os);
 			string strBasePath = GetBasePath (privateHeader.ClassName, manifest.HaveChildren);
 			string fileNameHeader = System.IO.Path.Combine (strBasePath, privateHeader.ClassName + "_" + os + ".hxx");
-			string fileNameImpl = System.IO.Path.Combine (strBasePath, privateHeaderImpl.ClassName + "_" + os + ".cxx");
+			string fileNameImpl = System.IO.Path.Combine (strBasePath, privateHeaderImpl.ClassName + "_" + os + ".cpp");
 			if (!System.IO.File.Exists (fileNameHeader)) 
 			{
 				privateHeader.Write ();
@@ -311,12 +314,12 @@ namespace System.Management.Tests
 		{
 			var sb = new System.Text.StringBuilder ("\\\n");
 			foreach (var manifest in manifests) {
-				sb.AppendLine ("\t" + manifest.Class.ClassName.ToString ().Replace ("CIM_", "").Replace ("UNIX_", "") + "\\");
+				if (!manifest.HaveChildren)
+					sb.AppendLine ("\t" + manifest.Class.ClassName.ToString ().Replace ("CIM_", "").Replace ("UNIX_", "") + "\\");
 			}
 			FolderMakefile provMakefile = new FolderMakefile ("../../..", sb.ToString());
 			provMakefile.Write ();
 			provMakefile.Save(System.IO.Path.Combine(BasePath, "Makefile"));
-
 		}
 
 		private static string GetBasePath(string name, bool haveChildren)

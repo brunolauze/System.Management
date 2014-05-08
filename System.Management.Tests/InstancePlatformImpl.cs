@@ -81,6 +81,11 @@ namespace System.Management.Tests
 			WriteLine ("\tcurrentScope = CIMName(scope.getString());");
 			WriteLine ("}");
 			WriteLine ("");
+			WriteLine ("void {0}::setCIMOMHandle(CIMOMHandle &ch)", ClassName);
+			WriteLine ("{");
+			WriteLine ("\t_cimomHandle = ch;");
+			WriteLine ("}");
+			WriteLine ("");
 		}
 	}
 }

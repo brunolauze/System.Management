@@ -25,7 +25,7 @@ namespace System.Management.Tests
 			WriteLicense ();
 			WriteLine ("");
 			WriteLine ("");
-			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+			WriteLine ("using PROVIDER_LIB_NS::CIMHelper;");
 			WriteLine ("");
 			if (Manifest.HaveChildren) {
 				WriteLine ("#include \"{0}.h\"", ClassName);
@@ -50,8 +50,17 @@ namespace System.Management.Tests
 			DeclareProperties (Manifest, added, Manifest.HaveChildren);
 			WriteLine ("");
 			added.Clear ();
-			WriteLine ("Boolean {0}::loadInstance(CIMInstance &instance)", ClassName);
+			WriteLine ("void {0}::clearInstance()", ClassName);
 			WriteLine ("{");
+			WriteLine ("");
+			WriteLoadProperties (Manifest, added);
+			added.Clear ();
+			WriteLine ("");
+			WriteLine ("}");
+			WriteLine ("");
+			WriteLine ("Boolean {0}::loadInstance(const CIMInstance &instance)", ClassName);
+			WriteLine ("{");
+			WriteLine ("\tclearInstance();");
 			WriteLine ("\tUint32 propertyCount = instance.getPropertyCount();");
 			WriteLine ("\tfor(Uint32 i = 0; i < propertyCount; i++) {");
 			WriteLine ("\t\tCIMConstProperty property = instance.getProperty(i);");
@@ -285,12 +294,17 @@ namespace System.Management.Tests
 					WriteLine ("}");
 				}
 				WriteLine ("");
-				if (DeriveFrom (Manifest, "CIM_ManagedSystemElement")) {
-					WriteLine ("Boolean {0}::loadByName(String &name)", ClassName);
+				if (HasProperty("Name")) {
+					WriteLine ("Boolean {0}::loadByName(const String name)", ClassName);
 					WriteLine ("{");
-					WriteLine ("\t");
-					WriteLine ("\treturn false;");
-					WriteLine ("\t");
+					string loadByName = TemplateFactory.GetLoadByName (ClassName, os);
+					if (!string.IsNullOrEmpty(loadByName))
+					{
+						WriteLine (loadByName);
+					}
+					else {
+						WriteLine ("\treturn false;");
+					}
 					WriteLine ("}");
 				}
 				WriteLine ("");
@@ -359,7 +373,7 @@ namespace System.Management.Tests
 				}
 				WriteLine ("}");
 				WriteLine ("");
-				WriteLine ("\tBoolean {0}::createInstance()", ClassName);
+				WriteLine ("Boolean {0}::createInstance(const OperationContext &ctx)", ClassName);
 				WriteLine ("{");
 				string createInstance = TemplateFactory.GetCreateInstance (ClassName, os);
 				if (!string.IsNullOrEmpty (createInstance)) {
@@ -370,7 +384,7 @@ namespace System.Management.Tests
 				}
 				WriteLine ("}");
 				WriteLine ("");
-				WriteLine ("\tvirtual Boolean {0}::modifyInstance()", ClassName);
+				WriteLine ("Boolean {0}::modifyInstance(const OperationContext &ctx)", ClassName);
 				WriteLine ("{");
 				string modifyInstance = TemplateFactory.GetModifyInstance (ClassName, os);
 				if (!string.IsNullOrEmpty (modifyInstance)) {
@@ -381,7 +395,7 @@ namespace System.Management.Tests
 				}
 				WriteLine ("}");
 				WriteLine ("");
-				WriteLine ("\tvirtual Boolean {0}::deleteInstance()", ClassName);
+				WriteLine ("Boolean {0}::deleteInstance(const OperationContext &ctx)", ClassName);
 				WriteLine ("{");
 				string deleteInstance = TemplateFactory.GetDeleteInstance (ClassName, os);
 				if (!string.IsNullOrEmpty (deleteInstance)) {
@@ -389,6 +403,17 @@ namespace System.Management.Tests
 				}
 				else {
 					WriteLine ("\treturn false;");
+				}
+				WriteLine ("}");
+				WriteLine ("");
+				WriteLine ("Boolean {0}::validateInstance()", ClassName);
+				WriteLine ("{");
+				string validateInstance = TemplateFactory.GetValidateInstance (ClassName, os);
+				if (!string.IsNullOrEmpty (validateInstance)) {
+					WriteLine (validateInstance);
+				}
+				else {
+					WriteLine ("\treturn true;");
 				}
 				WriteLine ("}");
 				WriteLine ("");

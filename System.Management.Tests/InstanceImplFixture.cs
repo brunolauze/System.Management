@@ -24,6 +24,7 @@ namespace System.Management.Tests
 			WriteLine ("{0}Fixture::~{0}Fixture()", ClassName);
 			WriteLine ("{");
 			WriteLine ("}");
+			AddCustomTests ();
 			WriteLine ("");
 			WriteLine ("void {0}Fixture::Run()", ClassName);
 			WriteLine ("{");
@@ -71,8 +72,75 @@ namespace System.Management.Tests
 			WriteLine ("\t}");
 			WriteLine ("");
 			WriteLine ("\t_p.finalize();");
+			WriteLine ("\t");
+			AddCustomTestCalls ();
 			WriteLine ("}");
 			WriteLine ("");
+		}
+
+		void AddCustomTests ()
+		{
+			bool isFirst = true;
+			AddCustomTests ("FREEBSD", ref isFirst);
+			AddCustomTests ("LINUX", ref isFirst);
+			AddCustomTests ("SOLARIS", ref isFirst);
+			AddCustomTests ("ZOS", ref isFirst);
+			AddCustomTests ("HPUX", ref isFirst);
+			AddCustomTests ("TRU64", ref isFirst);
+			AddCustomTests ("DARWIN", ref isFirst);
+			AddCustomTests ("AIX", ref isFirst);
+			AddCustomTests ("STUB", ref isFirst);
+			if (!isFirst) {
+				WriteLine ("#endif");
+			}
+		}
+
+		void AddCustomTests(string os, ref bool isFirst)
+		{
+			var tests = TemplateFactory.GetTests (ClassName, os);
+			if (tests == null)
+				return;
+			WriteLine ("#{0} PEGASUS_OS_{1}", isFirst ? "if" : "elif", os);
+			foreach (var test in tests) {
+				WriteLine ("\tvoid {0}Fixture::{1}()", ClassName, test.Name);
+				WriteLine ("{");
+				WriteLine (test.Code);
+				WriteLine ("}");
+			}
+
+			isFirst = false;
+
+		}
+
+		void AddCustomTestCalls ()
+		{
+			bool isFirst = true;
+			AddCustomTestCalls ("FREEBSD", ref isFirst);
+			AddCustomTestCalls ("LINUX", ref isFirst);
+			AddCustomTestCalls ("SOLARIS", ref isFirst);
+			AddCustomTestCalls ("ZOS", ref isFirst);
+			AddCustomTestCalls ("HPUX", ref isFirst);
+			AddCustomTestCalls ("TRU64", ref isFirst);
+			AddCustomTestCalls ("DARWIN", ref isFirst);
+			AddCustomTestCalls ("AIX", ref isFirst);
+			AddCustomTestCalls ("STUB", ref isFirst);
+			if (!isFirst) {
+				WriteLine ("#endif");
+			}
+		}
+
+		void AddCustomTestCalls(string os, ref bool isFirst)
+		{
+			var tests = TemplateFactory.GetTests (ClassName, os);
+			if (tests == null)
+				return;
+			WriteLine ("#{0} PEGASUS_OS_{1}", isFirst ? "if" : "elif", os);
+			foreach (var test in tests) {
+				WriteLine ("\t{0}();", test.Name);
+			}
+
+			isFirst = false;
+
 		}
 	}
 }

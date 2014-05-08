@@ -140,17 +140,20 @@ namespace System.Management.Tests
 
 			WriteLine ("\tvirtual Boolean initialize(){0};", DeclarationEnding);
 			WriteLine ("\tvirtual Boolean load(int&){0};", DeclarationEnding);
-			if (DeriveFrom (Manifest, "CIM_ManagedSystemElement")) {
-				WriteLine ("\tvirtual Boolean loadByName(String&){0};", DeclarationEnding);
+			if (HasProperty("Name")) {
+				WriteLine ("\tvirtual Boolean loadByName(const String){0};", DeclarationEnding);
 			}
 			WriteLine ("\tvirtual Boolean finalize(){0};", DeclarationEnding);
 			WriteLine ("\tvirtual Boolean find(const Array<CIMKeyBinding>&){0};", DeclarationEnding);
 			WriteLine ("\tvirtual Boolean validateKey(CIMKeyBinding&) const{0};", DeclarationEnding);
 			WriteLine ("\tvirtual void setScope(CIMName){0};", DeclarationEnding);
-			WriteLine ("\tvirtual Boolean loadInstance(CIMInstance&){0};", DeclarationEnding);
-			WriteLine ("\tvirtual Boolean createInstance(){0};", DeclarationEnding);
-			WriteLine ("\tvirtual Boolean modifyInstance(){0};", DeclarationEnding);
-			WriteLine ("\tvirtual Boolean deleteInstance(){0};", DeclarationEnding);
+			WriteLine ("\tvirtual void setCIMOMHandle(CIMOMHandle&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual void clearInstance(){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean loadInstance(const CIMInstance&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean createInstance(const OperationContext&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean modifyInstance(const OperationContext&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean deleteInstance(const OperationContext&){0};", DeclarationEnding);
+			WriteLine ("\tvirtual Boolean validateInstance(){0};", DeclarationEnding);
 			WriteLine ("");
 
 			DefinePropertiesGetter (Manifest, added, Manifest.HaveChildren);
@@ -164,6 +167,7 @@ namespace System.Management.Tests
 			WriteLine ("private:");
 			if (!Manifest.HaveChildren) {
 				WriteLine ("\tCIMName currentScope;");
+				WriteLine ("\tCIMOMHandle _cimomHandle;");
 				AddPrivateProperties (Manifest, added);
 				WriteLine ("");
 				if (isDependency) {

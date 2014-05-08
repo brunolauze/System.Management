@@ -19,7 +19,7 @@ namespace System.Management.Tests
 			WriteLine("");
 			WriteLine("#include \"{0}Provider.h\"", ClassName);
 			WriteLine("");
-			WriteLine ("using " + ClassName + "Lib::CIMHelper;");
+			WriteLine ("using PROVIDER_LIB_NS::CIMHelper;");
 			WriteLine ("");
 			WriteLine("{0}Provider::{0}Provider()", ClassName);
 			WriteLine("{");
@@ -335,7 +335,7 @@ namespace System.Management.Tests
 			WriteLine ("");
 			WriteLine ("\thandler.processing();");
 
-			WriteLine ("\t// Make cimom handle deleteInstance request from object path reference.");
+			WriteLine ("\t// Make cimom handle createInstance request from object path reference.");
 			WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
 			WriteLine ("\t\tString(\"\"),");
 			WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
@@ -347,18 +347,23 @@ namespace System.Management.Tests
 			WriteLine ("\t\t\t\tlocalReference.toString());");
 			WriteLine ("\t}");
 			WriteLine ("\telse {");
-			WriteLine ("\t\tif (_p.loadInstance(instanceObject) {");
-			WriteLine ("\t\t\tif (_p.createInstance()) {");
-			WriteLine ("\t\t\t\t/* Deliver Instance */");
-			WriteLine ("\t\t\t\tCIMInstance creationResult = constructInstance(");
+			WriteLine ("\t\tif (_p.loadInstance(instanceObject)) {");
+			WriteLine ("\t\t\tif (_p.validateInstance()) {");
+			WriteLine ("\t\t\t\tif (_p.createInstance(context)) {");
+			WriteLine ("\t\t\t\t\t/* Deliver Instance */");
+			WriteLine ("\t\t\t\t\tCIMInstance creationResult = constructInstance(");
 			WriteLine ("\t\t\t\t\t\t\tlocalReference.getClassName(), ");
 			WriteLine ("\t\t\t\t\t\t\tCIMNamespaceName(\"root/cimv2\"), ");
 			WriteLine ("\t\t\t\t\t\t\t_p);");
-			WriteLine ("\t\t\t\thandler.deliver(creationResult);");
-			WriteLine ("\t\t\t\t/* Send Create Indication */");
+			WriteLine ("\t\t\t\t\thandler.deliver(creationResult.getPath());");
+			WriteLine ("\t\t\t\t\t/* Send Create Indication */");
+			WriteLine ("\t\t\t\t}");
+			WriteLine ("\t\t\t\telse {");
+			WriteLine ("\t\t\t\t\t/* Raise Creating Exception */");
+			WriteLine ("\t\t\t\t}");
 			WriteLine ("\t\t\t}");
 			WriteLine ("\t\t\telse {");
-			WriteLine ("\t\t\t\t/* Raise Creating Exception */");
+			WriteLine ("\t\t\t\t/* Raise Validate Exception */");
 			WriteLine ("\t\t\t}");
 			WriteLine ("\t\t}");
 			WriteLine ("\t\telse {");
@@ -411,8 +416,8 @@ namespace System.Management.Tests
 			WriteLine ("\t\tref.getKeyBindings());");
 			WriteLine ("\t");
 
-			WriteLine ("\tif (_p.find(localReference.getKeyBindings()) {");
-			WriteLine ("\t\tif (!_p.deleteInstance()) {");
+			WriteLine ("\tif (_p.find(localReference.getKeyBindings())) {");
+			WriteLine ("\t\tif (!_p.deleteInstance(context)) {");
 			WriteLine ("\t\t\t/* Send Delete Indication */");
 			WriteLine ("\t\t}");
 			WriteLine ("\t\telse {");
@@ -479,7 +484,7 @@ namespace System.Management.Tests
 			WriteLine ("");
 			WriteLine ("\thandler.processing();");
 
-			WriteLine ("\t// Make cimom handle deleteInstance request from object path reference.");
+			WriteLine ("\t// Make cimom handle modifyInstance request from object path reference.");
 			WriteLine ("\tCIMObjectPath localReference = CIMObjectPath(");
 			WriteLine ("\t\tString(\"\"),");
 			WriteLine ("\t\tCIMNamespaceName(\"root/cimv2\"),");
@@ -487,13 +492,18 @@ namespace System.Management.Tests
 			WriteLine ("\t\tref.getKeyBindings());");
 			WriteLine ("\t");
 
-			WriteLine ("\tif (_p.find(localReference.getKeyBindings()) {");
-			WriteLine ("\t\tif (_p.loadInstance(instanceObject) {");
-			WriteLine ("\t\t\tif (!_p.modifyInstance()) {");
-			WriteLine ("\t\t\t\t/* Send Modify Indication */");
+			WriteLine ("\tif (_p.find(localReference.getKeyBindings())) {");
+			WriteLine ("\t\tif (_p.loadInstance(instanceObject)) {");
+			WriteLine ("\t\t\tif (_p.validateInstance()) {");
+			WriteLine ("\t\t\t\tif (!_p.modifyInstance(context)) {");
+			WriteLine ("\t\t\t\t\t/* Send Modify Indication */");
+			WriteLine ("\t\t\t\t}");
+			WriteLine ("\t\t\t\telse {");
+			WriteLine ("\t\t\t\t\t/* Raise Modify Exception */");
+			WriteLine ("\t\t\t\t}");
 			WriteLine ("\t\t\t}");
 			WriteLine ("\t\t\telse {");
-			WriteLine ("\t\t\t\t/* Raise Modify Exception */");
+			WriteLine ("\t\t\t\t/* Raise Validation Exception */");
 			WriteLine ("\t\t\t}");
 			WriteLine ("\t\t}");
 			WriteLine ("\t}");

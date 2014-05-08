@@ -105,6 +105,12 @@ namespace System.Management.Tests
 			return IsDerived (p, this.manifest.SuperClass);
 		}
 
+		public bool HasProperty(string name)
+		{
+			CimProperty property = GetProperty (Manifest, name);
+			return property != null;
+		}
+
 		public static CimProperty GetProperty(ClassManifest target, string propertyName)
 		{
 			var p = target.Class.Properties [propertyName];

@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include <sstream>
 
-PROVIDER_LIB_NS
+PROVIDER_LIB_NS_BEGIN
 
 String CIMHelper::getHostName()
 {
@@ -413,6 +413,22 @@ std::vector<std::string> & CIMHelper::split(const std::string &s, char delim, st
     return elems;
 }
 
+Boolean CIMHelper::contains(const Array<String> &arr, const String obj)
+{
+    for(Uint32 i = 0; i < arr.size(); i++)
+    {
+    	if (String::equal(arr[i], obj)) return true;
+    }
+    return false;
+}
+
+void CIMHelper::addCommandSwitch(String &cmd, const String switchName, const String value)
+{
+    cmd.append(" ");
+    cmd.append(switchName);
+    cmd.append(" ");
+    cmd.append(value);
+}
 
 std::vector<std::string> CIMHelper::split(const std::string &s, char delim) {
     std::vector<std::string> elems;

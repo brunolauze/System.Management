@@ -77,6 +77,7 @@
     <Compile Include="ProviderFixtureProjectMaker.cs" />
     <Compile Include="SingleFixtureCreator.cs" />
     <Compile Include="TestScriptMaker.cs" />
+    <Compile Include="TestTemplate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -134,11 +135,22 @@
     <None Include="UNIXProviderBase.hpp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Templates\UNIX_Account_FREEBSD.xml">
+    <None Include="MockResponseHandler.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="MockResponseHandler.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Account\UNIX_Account_FREEBSD.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Templates\Group\UNIX_Group_FREEBSD.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templates\" />
+    <Folder Include="Templates\Account\" />
+    <Folder Include="Templates\Group\" />
   </ItemGroup>
 </Project>

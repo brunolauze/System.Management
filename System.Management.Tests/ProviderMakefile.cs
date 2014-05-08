@@ -19,24 +19,33 @@ namespace System.Management.Tests
 			WriteLine ("");
 			WriteLine ("");
 			WriteLine ("ROOT = ../../../..");
-			WriteLine ("DIR = Providers/UNIXProviders/" + ClassName.Replace("CIM_", "").Replace("UNIX_", ""));
+			List<string> added = new List<string> ();
+			WriteLine ("DIR = \\");
+			AddExtraDirs (Manifest, added);
+			WriteLine("\tProviders/UNIXProviders/" + ClassName.Replace("CIM_", "").Replace("UNIX_", ""));
 			WriteLine ("include $(ROOT)/mak/config.mak");
 			WriteLine ("LIBRARY = {0}Provider", ClassName);
 			WriteLine ("EXTRA_INCLUDES += -I/usr/local/include -I./..");
 			WriteLine ("");
-			WriteLine ("DEFINES += -DPROVIDER_LIB_NS=\\\"namespace " + ClassName + "Lib {\\\"");
+			WriteLine ("DEFINES +=  -DPROVIDER_LIB_NS=\"" + ClassName + "Lib\" -DPROVIDER_LIB_NS_BEGIN=\"namespace " + ClassName + "Lib {\"");
 			WriteLine ("");
 			WriteLine ("SOURCES = \\");
 			WriteLine ("\t../CIMHelper.cpp \\");
-			WriteLine ("\t{0}.cpp", ClassName);
-			WriteLine ("\t{0}Provider.cpp", ClassName);
+			WriteLine ("\t{0}.cpp \\", ClassName);
+			WriteLine ("\t{0}Provider.cpp \\", ClassName);
 			WriteLine ("\t{0}Main.cpp", ClassName);
 			WriteLine ("");
 
-			AddPlatformSources (ClassName);
-			List<string> added = new List<string> ();
-			AddExtraSources (Manifest, added);
+			added.Clear ();
 
+			AddPlatformSources (ClassName);
+
+			//AddExtraSources (Manifest, added);
+
+			Write ("LIBRARIES += ");
+			AddExtraLibraries (Manifest, added);
+			WriteLine ("");
+			WriteLine ("");
 			WriteLine ("EXTRA_LIBRARIES = \\");
 			WriteLine ("\t-lpegprovider \\");
 			WriteLine ("\t-lpegclient \\");
@@ -101,6 +110,143 @@ namespace System.Management.Tests
 			WriteLine ("\tSOURCES += {0}_STUB.cpp", className);
 			WriteLine ("endif");
 			WriteLine ("");
+		}
+
+		void AddExtraDirs (ClassManifest manifest, List<string> added)
+		{
+			bool isDependency = DeriveFrom (Manifest, "CIM_Dependency");
+			bool isComponent = Class.ClassName.ToString() != "CIM_ConcreteComponent" && DeriveFrom (Manifest, "CIM_Component") && !Manifest.HaveChildren && ContainsProperties("GroupComponent", "PartComponent");
+			IEnumerable<string> groupNames = null;
+			IEnumerable<string> partNames = null;
+
+			if (this.Manifest.SuperClass == null) {
+
+			}
+			else {
+				added.Add (SuperClass);
+				if (SuperClass.Contains ("UNIX_")) {
+					AddExtraDirs (SuperClass);
+				} else {
+
+				}
+			}
+			if (isDependency) {
+
+				System.Management.Internal.CimPropertyReference r1 = GetProperty(Manifest, "Antecedent") as System.Management.Internal.CimPropertyReference;
+				System.Management.Internal.CimPropertyReference r2 = GetProperty(Manifest, "Dependent") as System.Management.Internal.CimPropertyReference;
+
+				//* GET ALL GROUP NAMES DERIVING FROM GROUP */
+				groupNames = GetAllTopClassesOf (r1.ReferenceClass.ToString ());
+				partNames = GetAllTopClassesOf (r2.ReferenceClass.ToString ());
+
+				foreach (var g in groupNames) {
+					if (added.Contains (g))
+						continue;
+					added.Add (g);
+					AddExtraDirs(g);
+				}
+				foreach (var p in partNames) {
+					if (added.Contains (p))
+						continue;
+					added.Add (p);
+					AddExtraDirs(p);
+				}
+			}
+			else if (isComponent) {
+				// Find GroupComponent Reference Class
+
+				System.Management.Internal.CimPropertyReference r1 = GetProperty(Manifest, "GroupComponent") as System.Management.Internal.CimPropertyReference;
+				System.Management.Internal.CimPropertyReference r2 = GetProperty(Manifest, "PartComponent") as System.Management.Internal.CimPropertyReference;
+
+				//* GET ALL GROUP NAMES DERIVING FROM GROUP */
+				groupNames = GetAllTopClassesOf (r1.ReferenceClass.ToString ());
+				partNames = GetAllTopClassesOf (r2.ReferenceClass.ToString ());
+
+				foreach (var g in groupNames) {
+					if (added.Contains (g))
+						continue;
+					added.Add (g);
+					AddExtraDirs(g);
+				}
+				foreach (var p in partNames) {
+					if (added.Contains (p))
+						continue;
+					added.Add (p);
+					AddExtraDirs(p);
+				}
+			}
+			AddMethodDirs (Manifest, added);
+		}
+
+		void AddExtraLibraries (ClassManifest manifest, List<string> added)
+		{
+			bool isDependency = DeriveFrom (Manifest, "CIM_Dependency");
+			bool isComponent = Class.ClassName.ToString() != "CIM_ConcreteComponent" && DeriveFrom (Manifest, "CIM_Component") && !Manifest.HaveChildren && ContainsProperties("GroupComponent", "PartComponent");
+			IEnumerable<string> groupNames = null;
+			IEnumerable<string> partNames = null;
+
+			if (this.Manifest.SuperClass == null) {
+
+			}
+			else {
+				added.Add (SuperClass);
+				if (SuperClass.Contains ("UNIX_")) {
+					AddExtraLibrary (SuperClass, added);
+				} else {
+
+				}
+			}
+			if (isDependency) {
+
+				System.Management.Internal.CimPropertyReference r1 = GetProperty(Manifest, "Antecedent") as System.Management.Internal.CimPropertyReference;
+				System.Management.Internal.CimPropertyReference r2 = GetProperty(Manifest, "Dependent") as System.Management.Internal.CimPropertyReference;
+
+				//* GET ALL GROUP NAMES DERIVING FROM GROUP */
+				groupNames = GetAllTopClassesOf (r1.ReferenceClass.ToString ());
+				partNames = GetAllTopClassesOf (r2.ReferenceClass.ToString ());
+
+				foreach (var g in groupNames) {
+					if (added.Contains (g))
+						continue;
+					added.Add (g);
+					AddExtraLibrary(g, added);
+				}
+				foreach (var p in partNames) {
+					if (added.Contains (p))
+						continue;
+					added.Add (p);
+					AddExtraLibrary(p, added);
+				}
+			}
+			else if (isComponent) {
+				// Find GroupComponent Reference Class
+
+				System.Management.Internal.CimPropertyReference r1 = GetProperty(Manifest, "GroupComponent") as System.Management.Internal.CimPropertyReference;
+				System.Management.Internal.CimPropertyReference r2 = GetProperty(Manifest, "PartComponent") as System.Management.Internal.CimPropertyReference;
+
+				//* GET ALL GROUP NAMES DERIVING FROM GROUP */
+				groupNames = GetAllTopClassesOf (r1.ReferenceClass.ToString ());
+				partNames = GetAllTopClassesOf (r2.ReferenceClass.ToString ());
+
+				foreach (var g in groupNames) {
+					if (added.Contains (g))
+						continue;
+					added.Add (g);
+					AddExtraLibrary(g, added);
+				}
+				foreach (var p in partNames) {
+					if (added.Contains (p))
+						continue;
+					added.Add (p);
+					AddExtraLibrary(p, added);
+				}
+			}
+			AddMethodLibraries (Manifest, added);
+		}
+
+		void AddExtraLibrary (string g, List<string> added)
+		{
+			Write ("\\\n\t{0}Provider", g);
 		}
 
 		void AddExtraSources (ClassManifest manifest, List<string> added)
@@ -169,6 +315,11 @@ namespace System.Management.Tests
 			AddMethodSources (Manifest, added);
 		}
 
+		void AddExtraDirs(string className)
+		{
+			WriteLine("\tProviders/UNIXProviders/" + className.Replace("CIM_", "").Replace("UNIX_", "") + " \\");
+		}
+
 		void AddExtraSources(string className)
 		{
 			WriteLine ("SOURCES += \\");
@@ -178,6 +329,50 @@ namespace System.Management.Tests
 			AddPlatformSources ("../" + className.Replace("CIM_", "").Replace("UNIX_", "") + "/" + className);
 			WriteLine ("");
 			WriteLine ("");
+		}
+
+		void AddMethodDirs (ClassManifest target, List<string> added)
+		{
+			if (target.SuperClass != null)
+				AddMethodDirs (target.SuperClass, added);
+
+			foreach (var method in target.Class.Methods) {
+				foreach (var parameter in method.Parameters) {
+					System.Management.Internal.CimParameterReference refParam = parameter as System.Management.Internal.CimParameterReference;
+					if (refParam != null) {
+						var name = refParam.ReferenceClass.ToString ().Replace ("CIM_", "UNIX_");
+						if (added.Contains (name))
+							continue;
+						added.Add (name);
+						var refManifest = GeneratorFactory.Classes.FirstOrDefault (x => !x.HaveChildren && CodeWriterBase.GetClassName (x) == name);
+						if (refManifest != null) {
+							AddExtraDirs (name);
+						}
+					}
+				}
+			}
+		}
+
+		void AddMethodLibraries (ClassManifest target, List<string> added)
+		{
+			if (target.SuperClass != null)
+				AddMethodLibraries (target.SuperClass, added);
+
+			foreach (var method in target.Class.Methods) {
+				foreach (var parameter in method.Parameters) {
+					System.Management.Internal.CimParameterReference refParam = parameter as System.Management.Internal.CimParameterReference;
+					if (refParam != null) {
+						var name = refParam.ReferenceClass.ToString ().Replace ("CIM_", "UNIX_");
+						if (added.Contains (name))
+							continue;
+						added.Add (name);
+						var refManifest = GeneratorFactory.Classes.FirstOrDefault (x => !x.HaveChildren && CodeWriterBase.GetClassName (x) == name);
+						if (refManifest != null) {
+							AddExtraLibrary (name, added);
+						}
+					}
+				}
+			}
 		}
 
 		void AddMethodSources (ClassManifest target, List<string> added)

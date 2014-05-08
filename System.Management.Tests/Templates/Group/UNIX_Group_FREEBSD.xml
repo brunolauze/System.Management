@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Template>
+  <Dependencies>
+    <![CDATA[
+#include <grp.h>    
+    ]]>
+  </Dependencies>
+  <Public>
+    <![CDATA[
+	virtual Boolean loadByGroupID(String groupID);
+    ]]>
+  </Public>
+  <Private>
+    <![CDATA[
+
+
+	void loadByGrp(group *grp);
+
+    ]]>
+  </Private>
+  <Declaration>
+    <![CDATA[
+#include <unistd.h>
+#include <sys/stat.h>
+#include <grp.h>
+#include <utmpx.h>
+#include <login_cap.h>
+
+void UNIX_Group::loadByGrp(group *grp)
+{
+    char groupId[256];
+	sprintf(groupId, "%d", grp->gr_gid);
+    String id(groupId);
+    id.append(":");
+    id.append(String(grp->gr_name));
+    _instanceID = id;
+	_caption = String (grp->gr_name);
+	_description = String ("");
+	_elementName = String("Group");
+	_generation = Uint64(0);
+	_creationClassName = String("UNIX_Group");
+	_name = String (grp->gr_name);
+	_businessCategory = String ("");
+	_commonName = String (grp->gr_name);
+}
+    ]]>
+  </Declaration>
+  <Initialize>
+    <![CDATA[
+	setgrent();
+	return true;    
+    ]]>
+  </Initialize>
+  <Load>
+    <![CDATA[
+  	group* grp;
+  	if ((grp = getgrent()) != NULL)
+	{
+    	loadByGrp(grp);
+		return true;
+	}
+  	return false;    
+    ]]>
+  </Load>
+  <LoadByName>
+  	<![CDATA[
+	group* grp;
+	const char *nam = name.getCString();
+	if ((grp = getgrnam(nam)) != NULL)
+	{
+    	loadByGrp(grp);
+		return true;
+	}
+	return false;
+  	]]>
+  </LoadByName>
+  <Finalize>
+    <![CDATA[
+	endgrent();
+	return true;
+    ]]>
+  </Finalize>
+  <CreateInstance>
+  	<![CDATA[
+	return false;
+  	]]>
+  </CreateInstance>
+  <DeleteInstance>
+  	<![CDATA[
+  	String name = getName();
+  	if (name.size() == 0) throw CIMObjectNotFoundException("Name cannot be null");
+  	String cmd("pw group del "); /* using pw command */
+  	cmd.append(name);
+  	FILE* pipe = popen(cmd.getCString(), "r");
+  	if (!pipe) throw CIMObjectNotFoundException("pw utility cannot be opened");
+  	if (!feof(pipe))
+  	{
+  		char buffer[512];
+  		if (fgets(buffer, 512, pipe) != NULL) {
+  			throw CIMObjectNotFoundException(String(buffer));
+  		}
+  	}
+	return true;
+  	]]>
+  </DeleteInstance>
+  <ModifyInstance>
+  	<![CDATA[
+	return false;
+  	]]>
+  </ModifyInstance>
+  <ValidateInstance>
+  	<![CDATA[
+	return true;
+  	]]>
+  </ValidateInstance>
+ <Tests>
+ 	<Test Name="Test_Group_DeleteInstance_001">
+ 		<![CDATA[
+	CIMName className("UNIX_Group");
+	CIMNamespaceName nameSpace("root/cimv2");
+	UNIX_Group _p;
+	OperationContext ctx;
+	UNIX_GroupProvider _provider;
+	CIMOMHandle omHandle;
+	_provider.initialize(omHandle);
+	_p.initialize();
+	MockResponseHandler _resp(String("Test_Group_DeleteInstance_001"));
+	String test01("test01");
+	if (_p.loadByName(test01))
+	{
+		CIMInstance instance = _provider.constructInstance(className,
+					nameSpace,
+					_p);
+		CIMObjectPath path = instance.getPath();
+		cout << path.toString() << endl; 
+
+		_provider.deleteInstance(ctx, path, _resp);
+		if (!_resp.wasHandled())
+		{
+			throw new CIMOperationFailedException("Group Delete Operation Failed");
+		}
+	}
+	else {
+		cout << "Group test01 not found" << endl;
+	} 	
+ 		]]>
+ 	</Test>
+ </Tests>
+</Template>

@@ -189,6 +189,7 @@ PARAMETERS        :
 void UNIX_PROVIDER::initialize(CIMOMHandle &ch)
 {
 	_cimomHandle = ch;
+	_p.setCIMOMHandle(_cimomHandle);
 }
 #endif
 

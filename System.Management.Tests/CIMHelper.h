@@ -56,7 +56,7 @@
 
 #endif
 
-PROVIDER_LIB_NS
+PROVIDER_LIB_NS_BEGIN
 
 class CIMHelper
 {
@@ -84,10 +84,10 @@ public:
     static Array<String> getPropertyAsStringArray(const CIMInstance&, String name);
     static Uint32 getPropertyAsUint32(const CIMInstance&, String name);
     static Uint64 getPropertyAsUint64(const CIMInstance&, String name);
-
+    static Boolean contains(const Array<String> &arr, const String obj);
     static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
     static std::vector<std::string> split(const std::string &s, char delim);
-
+    static void addCommandSwitch(String&, const String, const String);
 	static String getHostName();
 	static String getOSName();
 	static String HostName;
